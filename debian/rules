@@ -9,5 +9,34 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+PKG_name = $(shell dh_listpackages)
+TMP     = $(CURDIR)/debian/tmp
+PKG_lightdm_config_dir := /etc/lightdm
+PKG_lightdm_config_file := $(PKG_lightdm_config_dir)/lightdm.conf
+LIGHTDM_CONF_DIR := $(TMP)$(PKG_lightdm_config_dir)
+PKG_lightdm_custom_config_dir := /usr/share/$(PKG_driver)
+PKG_lightdm_custom_config_file := $(PKG_lightdm_custom_config_dir)/lightdm.conf
+LIGHTDM_CUSTOM_CONF_DIR := $(TMP)$(PKG_lightdm_custom_config_dir)
+XORG_CONF := /etc/X11/xorg.conf
+
 %:
-	dh $@ 
+	dh $@
+
+.PHONY: regen-from-templates
+regen-from-templates:
+	for i in $(CURDIR)/debian/install \
+		 $(CURDIR)/debian/preinst \
+		 $(CURDIR)/debian/postinst \
+		 $(CURDIR)/debian/postrm; do \
+		sed -e 's|#XORG_CONF#|$(XORG_CONF)|g' \
+			-e 's|#PKGNAME#|$(PKG_name)|g' \
+			-e "s|#LIGHTDM_CONF_FILE#|$(PKG_lightdm_config_file)|g" \
+			-e "s|#LIGHTDM_CONF_DIR#|$(PKG_lightdm_config_dir)|g" \
+			-e "s|#LIGHTDM_CUSTOM_CONF_FILE#|$(PKG_lightdm_custom_config_file)|g" \
+			-e "s|#LIGHTDM_CUSTOM_CONF_DIR#|$(PKG_lightdm_custom_config_dir)|g" \
+		$$i.in > $$i; \
+	done
+
+override_dh_auto_clean: regen-from-templates
+
+override_dh_auto_install: regen-from-templates
