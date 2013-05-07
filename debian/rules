@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+#
+# Copyright 2013 Canonical Ltd.
+#
+# Author: Alberto Milone <alberto.milone@canonical.com>
+
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+	dh $@ 
