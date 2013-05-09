@@ -71,7 +71,7 @@ EOF
         # If there's no lightdm conf file, then we're in trouble
         # add a new one
         if [ ! -f /etc/lightdm/lightdm.conf ]; then
-            cp -f /usr/share//lightdm.conf /etc/lightdm/lightdm.conf
+            cp -f /usr/share/nvidia-prime/lightdm.conf /etc/lightdm/lightdm.conf
         fi
 
     ;;

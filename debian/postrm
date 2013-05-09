@@ -35,7 +35,7 @@ case "$1" in
             dpkg-divert --remove --rename --package nvidia-prime \
                         --divert /etc/lightdm/lightdm.conf.nvidia-prime \
                         /etc/lightdm/lightdm.conf > /dev/null
-
+        fi
     ;;
 
     *)
