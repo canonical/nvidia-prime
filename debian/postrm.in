@@ -18,7 +18,7 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
-xorg_conf=/etc/X11/xorg.conf
+xorg_conf="#XORG_CONF#"
 now=$(date +"%m%d%Y")
 
 case "$1" in

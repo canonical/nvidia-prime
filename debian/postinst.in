@@ -17,7 +17,7 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
-xorg_conf=/etc/X11/xorg.conf
+xorg_conf="#XORG_CONF#"
 
 nvidia_id="$(lspci -n | grep 300 | grep de | cut -d" " -f1 | sed s/\\./:/g)"
 id_0="$(echo $nvidia_id | cut -d: -f1)"
