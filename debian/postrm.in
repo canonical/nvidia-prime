@@ -28,12 +28,14 @@ case "$1" in
             mv $xorg_conf $xorg_conf.$now
         fi
 
-        # Restore the default lightdm.conf, if any
-        if dpkg-divert --list #LIGHTDM_CONF_FILE# | \
-           grep 'nvidia-prime' > /dev/null ; then
-            rm -f #LIGHTDM_CONF_FILE#
-            dpkg-divert --remove --rename --package nvidia-prime \
-                        #LIGHTDM_CONF_FILE# > /dev/null
+        if [ ! "$1" = "upgrade" ]; then
+            # Restore the default lightdm.conf, if any
+            if dpkg-divert --list #LIGHTDM_CONF_FILE# | \
+                grep 'nvidia-prime' > /dev/null ; then
+                rm -f #LIGHTDM_CONF_FILE#
+                dpkg-divert --remove --rename --package nvidia-prime \
+                    #LIGHTDM_CONF_FILE# > /dev/null
+            fi
         fi
     ;;
 
