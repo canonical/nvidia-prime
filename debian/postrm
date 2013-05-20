@@ -3,7 +3,7 @@
 #
 # see: dh_installdeb(1)
 
-set -ex
+set -e
 
 # summary of how this script can be called:
 #        * <postrm> `remove'
@@ -28,12 +28,14 @@ case "$1" in
             mv $xorg_conf $xorg_conf.$now
         fi
 
-        # Restore the default lightdm.conf, if any
-        if dpkg-divert --list /etc/lightdm/lightdm.conf | \
-           grep 'nvidia-prime' > /dev/null ; then
-            rm -f /etc/lightdm/lightdm.conf
-            dpkg-divert --remove --rename --package nvidia-prime \
-                        /etc/lightdm/lightdm.conf > /dev/null
+        if [ ! "$1" = "upgrade" ]; then
+            # Restore the default lightdm.conf, if any
+            if dpkg-divert --list /etc/lightdm/lightdm.conf | \
+                grep 'nvidia-prime' > /dev/null ; then
+                rm -f /etc/lightdm/lightdm.conf
+                dpkg-divert --remove --rename --package nvidia-prime \
+                    /etc/lightdm/lightdm.conf > /dev/null
+            fi
         fi
     ;;
 
