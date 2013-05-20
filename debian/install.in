@@ -1,3 +1,2 @@
 hybrid-power /sbin
-lightdm.conf #LIGHTDM_CONF_DIR#
 lightdm.conf #LIGHTDM_CUSTOM_CONF_DIR#

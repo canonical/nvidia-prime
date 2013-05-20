@@ -16,18 +16,18 @@ set -e
 
 case "$1" in
     install|upgrade)
-        if dpkg-divert --list /etc/lightdm/lightdm.conf | \
+        if dpkg-divert --list #LIGHTDM_CONF_FILE# | \
            grep 'nvidia-prime' > /dev/null ; then
-            rm -f /etc/lightdm/lightdm.conf
+            rm -f #LIGHTDM_CONF_FILE#
             dpkg-divert --remove --rename --package nvidia-prime \
-            --divert /etc/lightdm/lightdm.conf.nvidia-prime \
-            /etc/lightdm/lightdm.conf > /dev/null
+            --divert #LIGHTDM_CONF_FILE#.nvidia-prime \
+            #LIGHTDM_CONF_FILE# > /dev/null
         fi
 
         # Add the new diversion
         dpkg-divert --add --rename --package nvidia-prime --divert \
-        /etc/lightdm/lightdm.conf.nvidia-prime \
-        /etc/lightdm/lightdm.conf > /dev/null
+        #LIGHTDM_CONF_FILE#.nvidia-prime \
+        #LIGHTDM_CONF_FILE# > /dev/null
     ;;
 
     abort-upgrade)
