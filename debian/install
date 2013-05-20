@@ -1,3 +1,2 @@
 hybrid-power /sbin
-lightdm.conf /etc/lightdm
 lightdm.conf /usr/share/nvidia-prime
