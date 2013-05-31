@@ -13,21 +13,45 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
+lightdm_orig_conf=#LIGHTDM_CONF_FILE#
+
+add_hybrid_script () {
+    if [ -f "$lightdm_orig_conf" -a \
+         ! -z "$(cat $lightdm_orig_conf)" ]; then
+        # Get the file
+        lightdm_orig="$(cat $lightdm_orig_conf)"
+
+        # See if a display setup script is already
+        # in use
+        if echo "$lightdm_orig" | \
+             grep "display-setup-script"; then
+            echo "$lightdm_orig" | \
+            sed "s/.*display-setup-script.*/\
+display-setup-script\=\/sbin\/hybrid-power/g" \
+            > "$lightdm_orig_conf"
+        else
+            # Add a line after the pattern
+            echo "$lightdm_orig" | \
+            sed '/.*user-session.*/ a\
+display-setup-script\=\/sbin\/hybrid-power' \
+            > "$lightdm_orig_conf"
+        fi
+    else
+        # File does not exist or is empty.
+        # Using custom file
+        cat > $lightdm_orig_conf <<EOF
+[SeatDefaults]
+user-session=ubuntu
+greeter-session=unity-greeter
+display-setup-script=/sbin/hybrid-power
+EOF
+    fi
+}
 
 case "$1" in
     install|upgrade)
-        if dpkg-divert --list #LIGHTDM_CONF_FILE# | \
-           grep 'nvidia-prime' > /dev/null ; then
-            rm -f #LIGHTDM_CONF_FILE#
-            dpkg-divert --remove --rename --package nvidia-prime \
-            --divert #LIGHTDM_CONF_FILE#.nvidia-prime \
-            #LIGHTDM_CONF_FILE# > /dev/null
-        fi
-
-        # Add the new diversion
-        dpkg-divert --add --rename --package nvidia-prime --divert \
-        #LIGHTDM_CONF_FILE#.nvidia-prime \
-        #LIGHTDM_CONF_FILE# > /dev/null
+        # Insert the display-setup-script line
+        add_hybrid_script
     ;;
 
     abort-upgrade)

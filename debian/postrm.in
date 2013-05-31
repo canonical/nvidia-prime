@@ -20,6 +20,17 @@ set -e
 
 xorg_conf="#XORG_CONF#"
 now=$(date +"%m%d%Y")
+lightdm_orig_conf=#LIGHTDM_CONF_FILE#
+
+remove_hybrid_script () {
+    if [ -f "$lightdm_orig_conf" -a ! -z "$(cat $lightdm_orig_conf)" ]; then
+        # Get the file
+        lightdm_orig="$(cat $lightdm_orig_conf)"
+        echo "$lightdm_orig" | \
+        sed "/.*display-setup-script.*/d" \
+        > "$lightdm_orig_conf"
+    fi
+}
 
 case "$1" in
     purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
@@ -29,13 +40,8 @@ case "$1" in
         fi
 
         if [ ! "$1" = "upgrade" ]; then
-            # Restore the default lightdm.conf, if any
-            if dpkg-divert --list #LIGHTDM_CONF_FILE# | \
-                grep 'nvidia-prime' > /dev/null ; then
-                rm -f #LIGHTDM_CONF_FILE#
-                dpkg-divert --remove --rename --package nvidia-prime \
-                    #LIGHTDM_CONF_FILE# > /dev/null
-            fi
+            # Remove the display-setup-script line
+            remove_hybrid_script
         fi
     ;;
 
