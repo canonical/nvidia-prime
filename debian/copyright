@@ -4,13 +4,13 @@ Source: git://github.com/tseliot/nvidia-prime.git
 
 Files: *
 Copyright: 2013 Canonical Ltd.
-License: GPL-3.0+
+License: GPL-3.0
 
 Files: debian/*
 Copyright: 2013 Canonical Ltd.
-License: GPL-3.0+
+License: GPL-3.0
 
-License: GPL-3.0+
+License: GPL-3.0
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
