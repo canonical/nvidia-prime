@@ -36,15 +36,6 @@ display-setup-script\=\/sbin\/hybrid-power/g" \
 display-setup-script\=\/sbin\/hybrid-power' \
             > "$lightdm_orig_conf"
         fi
-    else
-        # File does not exist or is empty.
-        # Using custom file
-        cat > $lightdm_orig_conf <<EOF
-[SeatDefaults]
-user-session=ubuntu
-greeter-session=unity-greeter
-display-setup-script=/sbin/hybrid-power
-EOF
     fi
 }
 
