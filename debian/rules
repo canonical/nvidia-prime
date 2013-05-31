@@ -37,6 +37,12 @@ regen-from-templates:
 		$$i.in > $$i; \
 	done
 
-override_dh_auto_clean: regen-from-templates
+override_dh_auto_clean:
+	for i in $(CURDIR)/debian/install \
+		 $(CURDIR)/debian/preinst \
+		 $(CURDIR)/debian/postinst \
+		 $(CURDIR)/debian/postrm; do \
+		rm -f $$i; \
+	done
 
 override_dh_auto_install: regen-from-templates
