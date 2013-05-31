@@ -8,7 +8,7 @@ Vcs-Git: git://github.com/tseliot/nvidia-prime.git
 Vcs-Browser: http://github.com/tseliot/nvidia-prime
 
 Package: nvidia-prime
-Architecture: any
+Architecture: all
 Depends: lightdm, pciutils, ${shlibs:Depends}, ${misc:Depends}
 Description: Tools to enable NVIDIA's Prime
  This is a set of tools which will enable
