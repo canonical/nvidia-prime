@@ -17,6 +17,12 @@ LIGHTDM_CONF_DIR := $(TMP)$(PKG_lightdm_config_dir)
 PKG_lightdm_custom_config_dir := /usr/share/$(PKG_name)
 PKG_lightdm_custom_config_file := $(PKG_lightdm_custom_config_dir)/lightdm.conf
 LIGHTDM_CUSTOM_CONF_DIR := $(TMP)$(PKG_lightdm_custom_config_dir)
+# This doesn't work in Precise but it's harmless
+# We need it to disable XMir
+PKG_lightdm_config_filename_d := 90-nvidia.conf
+PKG_lightdm_config_dir_d := $(PKG_lightdm_config_dir)/lightdm.conf.d
+PKG_lightdm_config_file_d := $(PKG_lightdm_config_dir_d)/$(PKG_lightdm_config_filename_d)
+
 XORG_CONF := /etc/X11/xorg.conf
 
 %:
@@ -34,6 +40,9 @@ regen-from-templates:
 			-e "s|#LIGHTDM_CONF_DIR#|$(PKG_lightdm_config_dir)|g" \
 			-e "s|#LIGHTDM_CUSTOM_CONF_FILE#|$(PKG_lightdm_custom_config_file)|g" \
 			-e "s|#LIGHTDM_CUSTOM_CONF_DIR#|$(PKG_lightdm_custom_config_dir)|g" \
+			-e "s|#LIGHTDM_CONF_FILE_D#|$(PKG_lightdm_config_file_d)|g" \
+			-e "s|#LIGHTDM_CONF_DIR_D#|$(PKG_lightdm_config_dir_d)|g" \
+			-e "s|#LIGHTDM_CONF_FILENAME_D#|$(PKG_lightdm_config_filename_d)|g" \
 		$$i.in > $$i; \
 	done
 
