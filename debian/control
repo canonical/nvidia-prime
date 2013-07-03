@@ -10,6 +10,9 @@ Vcs-Browser: http://github.com/tseliot/nvidia-prime
 Package: nvidia-prime
 Architecture: all
 Depends: lightdm, pciutils, ${shlibs:Depends}, ${misc:Depends}
+Conflicts: hybrid-graphics
+Replaces: hybrid-graphics
+Provides: hybrid-graphics
 Description: Tools to enable NVIDIA's Prime
  This is a set of tools which will enable
  NVIDIA's Prime on MUXless systems.
