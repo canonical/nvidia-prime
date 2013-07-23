@@ -1,5 +1,5 @@
-nvidia-prime (0.2~hybrid0.0.1) UNRELEASED; urgency=low
+nvidia-prime (0.3~hybrid0.0.1) precise; urgency=low
 
-  * 
+  * Initial release (LP: #1198942).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Tue, 23 Jul 2013 12:21:55 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 24 Jul 2013 10:51:32 +0200
