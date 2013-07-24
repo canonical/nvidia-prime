@@ -1,8 +1,11 @@
-nvidia-prime (0.2ubuntu1) UNRELEASED; urgency=low
+nvidia-prime (0.3) saucy; urgency=low
 
-  * 
+  * debian/postinst.in:
+    - Do not touch the lightdm.conf (LP: #1199342).
+  * debian/preinst.in:
+    - Create a lightdm.conf if none can be found.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Wed, 24 Jul 2013 08:52:07 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 24 Jul 2013 10:20:06 +0200
 
 nvidia-prime (0.2) saucy; urgency=low
 
