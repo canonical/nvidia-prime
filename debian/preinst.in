@@ -17,7 +17,7 @@ lightdm_orig_conf=#LIGHTDM_CONF_FILE#
 
 add_hybrid_script () {
     if [ -f "$lightdm_orig_conf" -a \
-         ! -z "$(cat $lightdm_orig_conf)" ]; then
+         ! -s "$lightdm_orig_conf" ]; then
         # Get the file
         lightdm_orig="$(cat $lightdm_orig_conf)"
 
@@ -36,6 +36,15 @@ display-setup-script\=\/sbin\/hybrid-power/g" \
 display-setup-script\=\/sbin\/hybrid-power' \
             > "$lightdm_orig_conf"
         fi
+    else
+        # Let's create a configuration file
+        # from scratch
+        cat > $lightdm_orig_conf <<EOF
+[SeatDefaults]
+greeter-session=unity-greeter
+user-session=ubuntu
+display-setup-script=/sbin/hybrid-power
+EOF
     fi
 }
 

@@ -68,12 +68,6 @@ Section "Screen"
 EndSection
 EOF
 
-        # If there's no lightdm conf file, then we're in trouble
-        # add a new one
-        if [ ! -f #LIGHTDM_CONF_FILE# ]; then
-            cp -f #LIGHTDM_CUSTOM_CONF_FILE# #LIGHTDM_CONF_FILE#
-        fi
-
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
