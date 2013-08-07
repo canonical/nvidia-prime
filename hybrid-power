@@ -28,9 +28,39 @@ if ! lsmod | grep nvidia > /dev/null; then
 fi
 
 # We only support intel + nvidia
-cards="$(lspci -n | grep 300)"
-if ! (echo "$cards" | grep -i 10de > /dev/null && \
-    echo "$cards" | grep 8086 > /dev/null); then
+cards="$(lspci -n)"
+# the different classes as per pci.ids
+# Syntax:
+# C class   class_name
+#   subclass    subclass_name       <-- single tab
+#       prog-if  prog-if_name   <-- two tabs
+#C 03  Display controller
+#    00  VGA compatible controller
+#        00  VGA controller
+#        01  8514 controller
+#    01  XGA compatible controller
+#    02  3D controller
+#    80  Display controller
+gfx_300="$(echo "$cards" | grep 300)"
+gfx_301="$(echo "$cards" | grep 301)"
+gfx_302="$(echo "$cards" | grep 302)"
+gfx_380="$(echo "$cards" | grep 380)"
+
+has_nvidia=false
+has_intel=false
+
+for gfx_class in "$gfx_300" "$gfx_301" "$gfx_302" "$gfx_380"; do
+    if echo "$gfx_class" | egrep -q "8086"; then
+      # Intel detected
+      has_intel=true
+    fi
+    if echo "$gfx_class" | egrep -q "10de"; then
+      # Nvidia detected
+      has_nvidia=true
+    fi
+done
+
+if ! $has_intel || ! $has_nvidia; then
     echo "Sorry we only support Intel+Nvidia" \
          > $PRIME_LOG 2>&1
     exit 0
