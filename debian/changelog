@@ -1,8 +1,10 @@
-nvidia-prime (0.4) UNRELEASED; urgency=low
+nvidia-prime (0.4) saucy; urgency=low
 
-  * 
+  * debian/postinst.in, hybrid-power:
+    - Make sure to support more pci device classes as per
+      the pci.ids file (LP: #1207626).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Wed, 07 Aug 2013 17:15:14 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 08 Aug 2013 11:27:27 +0200
 
 nvidia-prime (0.3) saucy; urgency=low
 
