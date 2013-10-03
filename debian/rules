@@ -24,6 +24,7 @@ PKG_lightdm_config_dir_d := $(PKG_lightdm_config_dir)/lightdm.conf.d
 PKG_lightdm_config_file_d := $(PKG_lightdm_config_dir_d)/$(PKG_lightdm_config_filename_d)
 
 XORG_CONF := /etc/X11/xorg.conf
+XORG_TEMPLATE := $(PKG_lightdm_custom_config_dir)/xorg.template
 
 %:
 	dh $@
@@ -31,10 +32,13 @@ XORG_CONF := /etc/X11/xorg.conf
 .PHONY: regen-from-templates
 regen-from-templates:
 	for i in $(CURDIR)/debian/install \
+		 $(CURDIR)/debian/$(PKG_name).upstart \
+	     $(CURDIR)/debian/dirs \
 		 $(CURDIR)/debian/preinst \
 		 $(CURDIR)/debian/postinst \
 		 $(CURDIR)/debian/postrm; do \
 		sed -e 's|#XORG_CONF#|$(XORG_CONF)|g' \
+			-e 's|#XORG_TEMPLATE#|$(XORG_TEMPLATE)|g' \
 			-e 's|#PKGNAME#|$(PKG_name)|g' \
 			-e "s|#LIGHTDM_CONF_FILE#|$(PKG_lightdm_config_file)|g" \
 			-e "s|#LIGHTDM_CONF_DIR#|$(PKG_lightdm_config_dir)|g" \
@@ -43,11 +47,14 @@ regen-from-templates:
 			-e "s|#LIGHTDM_CONF_FILE_D#|$(PKG_lightdm_config_file_d)|g" \
 			-e "s|#LIGHTDM_CONF_DIR_D#|$(PKG_lightdm_config_dir_d)|g" \
 			-e "s|#LIGHTDM_CONF_FILENAME_D#|$(PKG_lightdm_config_filename_d)|g" \
+			-e "s|#PRIME_DIR#|$(PKG_lightdm_config_filename_d)|g" \
 		$$i.in > $$i; \
 	done
 
 override_dh_auto_clean:
 	for i in $(CURDIR)/debian/install \
+		 $(CURDIR)/debian/$(PKG_name).upstart \
+	     $(CURDIR)/debian/dirs \
 		 $(CURDIR)/debian/preinst \
 		 $(CURDIR)/debian/postinst \
 		 $(CURDIR)/debian/postrm; do \
