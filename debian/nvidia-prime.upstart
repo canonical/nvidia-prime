@@ -56,11 +56,11 @@ script
     if [ "$action" = "ON" ]; then
         echo "Configuring xorg.conf" \
          >> $LOG 2>&1
-        /usr/bin/prime-xconfig on
+        /sbin/prime-xconfig on
     elif [ "$action" = "OFF" ]; then
         echo "Moving xorg.conf away" \
          >> $LOG 2>&1
-        /usr/bin/prime-xconfig off
+        /sbin/prime-xconfig off
 
         # Do we need to take action?
         if [ "$action" = "$nvidia_status" ]; then

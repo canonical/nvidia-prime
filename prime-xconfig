@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+# Copyright 2013 Canonical Ltd.
+#
+# Author: Alberto Milone <alberto.milone@canonical.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+nv_get_id() {
+    bus_id=""
+    nvidia_id=""
+    pattern="10de"
+    for devclass in "300" "301" "302" "380"; do
+        nvidia_id="$(lspci -n | grep $devclass | grep $pattern | cut -d" " -f1 | sed s/\\./:/g)"
+        if [ -n "$nvidia_id" ]; then
+            # We have found the device
+            break
+        fi
+    done
+
+    id_0="$(echo $nvidia_id | cut -d: -f1)"
+    id_1="$(echo $nvidia_id | cut -d: -f2)"
+    id_2="$(echo $nvidia_id | cut -d: -f3)"
+
+    printf "%d:%d:%d\n" $id_0 $id_1 $id_1
+}
+
+xorg_conf=/etc/X11/xorg.conf
+xorg_template=/usr/share/nvidia-prime/xorg.template
+
+action="$1"
+
+if [ "$action" = "on" ]; then
+    # Get the BusID of NVIDIA
+    bus_id=$(nv_get_id)
+    # Set up a xorg.conf
+    sed -e 's|#BUSID#|$bus_id|g' \
+    $xorg_template > $xorg_conf
+elif [ "$action" = "off" ]; then
+    # Move away xorg.conf
+    now=$(date +"%m%d%Y")
+    if [ -f "$xorg_conf" ]; then
+        mv $xorg_conf $xorg_conf.$now
+    fi
+fi

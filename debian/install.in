@@ -2,4 +2,4 @@
 xorg.template #LIGHTDM_CUSTOM_CONF_DIR#
 hybrid-power /sbin
 hybrid-switch /sbin
-get-nvidia-id /usr/bin
+prime-xconfig /sbin
