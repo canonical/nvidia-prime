@@ -1,0 +1,59 @@
+# NVIDIA PRIME - Power Saving Mode
+#
+# We need to make sure that bbswitch is loaded and
+# that the NVIDIA card is disabled before lightdm
+# starts X if system settings require so.
+#
+
+description	"NVIDIA PRIME Power Saving Mode"
+author		"Alberto Milone <alberto.milone@canonical.com>"
+
+start on starting lightdm
+
+script
+    LOG=/var/log/nvidia_prime.log
+    prime_settings=/etc/lightdm/hybrid_default
+    prime_power=/proc/acpi/bbswitch
+
+    # Remove any previous logs
+    rm -f $LOG
+
+    if [ ! -e $prime_settings ]; then
+        echo "No settings for prime can be found in $prime_settings" \
+         > $LOG 2>&1
+        exit 0
+    fi
+
+    if [ ! -e $prime_power ]; then
+        echo "No bbswitch can be found 1st attempt" \
+         >> $LOG 2>&1
+        # Load bbswitch
+        /sbin/modprobe bbswitch || true
+        # Try again
+        if [ ! -e $prime_power ]; then
+            echo "No bbswitch can be found 2nd attempt" \
+                  >> $LOG 2>&1
+            exit 0
+        fi
+    fi
+
+    nvidia_status="`cat $prime_power | cut -d " " -f2`"
+    action="`cat $prime_settings`"
+
+    # Do we need to take action?
+    if [ "$action" = "$nvidia_status" ]; then
+        echo "No action required to get PRIME to work" \
+         >> $LOG 2>&1
+        exit 0
+    fi
+
+    if [ "$action" = "OFF" ]; then
+        echo "Disabling the NVIDIA card" \
+         >> $LOG 2>&1
+        /sbin/rmmod nvidia || true
+        echo "OFF" > /proc/acpi/bbswitch
+        exit 0
+    fi
+end script
+
+
