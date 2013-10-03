@@ -1,3 +1,5 @@
 #LIGHTDM_CONF_FILENAME_D# #LIGHTDM_CONF_DIR_D#
+xorg.template #LIGHTDM_CUSTOM_CONF_DIR#
 hybrid-power /sbin
 hybrid-switch /sbin
+get-nvidia-id /usr/bin
