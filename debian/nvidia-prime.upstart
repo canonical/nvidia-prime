@@ -1,3 +1,8 @@
+#
+# Copyright 2013 Canonical Ltd.
+#
+# Author: Alberto Milone <alberto.milone@canonical.com>
+#
 # NVIDIA PRIME - Power Saving Mode
 #
 # We need to make sure that bbswitch is loaded and
@@ -40,19 +45,33 @@ script
     nvidia_status="`cat $prime_power | cut -d " " -f2`"
     action="`cat $prime_settings`"
 
-    # Do we need to take action?
-    if [ "$action" = "$nvidia_status" ]; then
-        echo "No action required to get PRIME to work" \
-         >> $LOG 2>&1
-        exit 0
-    fi
 
-    if [ "$action" = "OFF" ]; then
+    if [ "$action" = "ON" ]; then
+        # Get the BusID of NVIDIA
+        bus_id="`/usr/bin/get-nvidia-id`"
+        # Set up a xorg.conf
+        sed -e 's|#BUSID#|$bus_id|g' \
+        #XORG_TEMPLATE# \
+        > #XORG_CONF#
+    elif [ "$action" = "OFF" ]; then
+        # Do we need to take action?
+        if [ "$action" = "$nvidia_status" ]; then
+            echo "No action required to get PRIME to work" \
+             >> $LOG 2>&1
+            exit 0
+        fi
+
+        # Move away xorg.conf
+        now=$(date +"%m%d%Y")
+        if [ -f "#XORG_CONF#" ]; then
+            mv #XORG_CONF# #XORG_CONF#.$now
+        fi
+
+        # Disable the card
         echo "Disabling the NVIDIA card" \
          >> $LOG 2>&1
         /sbin/rmmod nvidia || true
         echo "OFF" > /proc/acpi/bbswitch
-        exit 0
     fi
 end script
 
