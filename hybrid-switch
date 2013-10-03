@@ -17,47 +17,74 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-PRIME_LOG=/var/log/lightdm_prime_out.log
+LOG=/var/log/lightdm_prime_out.log
 prime_settings=/etc/lightdm/hybrid_default
 prime_power=/proc/acpi/bbswitch
 
-if [ ! -e $prime_settings ]; then
-    echo "No settings for prime can be found in $prime_settings" \
-         > $PRIME_LOG 2>&1
+# Remove any previous logs
+rm -f $LOG
+
+if lsmod | grep nouveau > /dev/null; then
+    # Exit if nouveau is in use
+    echo "Sorry but nvidia-prime does not work with the nouveau driver" \
+         > $LOG 2>&1
     exit 0
 fi
 
+if [ ! -e $prime_settings ]; then
+    echo "No settings for prime can be found in $prime_settings" \
+         > $LOG 2>&1
+    exit 0
+fi
+
+if ! lsmod | grep bbswitch > /dev/null; then
+    # Try to load bbswitch
+    /sbin/modprobe bbswitch || true
+fi
+
 if [ ! -e $prime_power ]; then
+    # If we get here there is no bbswitch module
     echo "No bbswitch can be found" \
-         > $PRIME_LOG 2>&1
+         > $LOG 2>&1
     exit 0
 fi
 
 nvidia_status="`cat $prime_power | cut -d " " -f2`"
 action="`cat $prime_settings`"
 
-# Do we need to change anything?
+# Always set up xorg.conf
+if [ "$action" = "ON" ]; then
+    echo "Configuring xorg.conf" \
+     >> $LOG 2>&1
+    /usr/bin/prime-xconfig on
+elif [ "$action" = "OFF" ]; then
+    echo "Moving xorg.conf away" \
+     >> $LOG 2>&1
+    /usr/bin/prime-xconfig off
+fi
+
+# Do we need to call bbswitch?
 if [ "$action" = "$nvidia_status" ]; then
     echo "No action required to get PRIME to work" \
-         > $PRIME_LOG 2>&1
+         > $LOG 2>&1
     exit 0
 fi
 
 if [ "$action" = "ON" ]; then
     echo "Enabling the NVIDIA card" \
-         > $PRIME_LOG 2>&1
+         > $LOG 2>&1
     echo "ON" > /proc/acpi/bbswitch
     /sbin/modprobe nvidia || true
     exit 0
 elif [ "$action" = "OFF" ]; then
     echo "Disabling the NVIDIA card" \
-         > $PRIME_LOG 2>&1
+         > $LOG 2>&1
     /sbin/rmmod nvidia || true
     echo "OFF" > /proc/acpi/bbswitch
     exit 0
 else
     echo "\"$action\" is not a valid action for PRIME" \
-         > $PRIME_LOG 2>&1
+         > $LOG 2>&1
     exit 0
 fi
 
