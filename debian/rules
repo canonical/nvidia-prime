@@ -32,7 +32,6 @@ XORG_TEMPLATE := $(PKG_lightdm_custom_config_dir)/xorg.template
 .PHONY: regen-from-templates
 regen-from-templates:
 	for i in $(CURDIR)/debian/install \
-		 $(CURDIR)/debian/$(PKG_name).upstart \
 	     $(CURDIR)/debian/dirs \
 		 $(CURDIR)/debian/preinst \
 		 $(CURDIR)/debian/postinst \
@@ -53,7 +52,6 @@ regen-from-templates:
 
 override_dh_auto_clean:
 	for i in $(CURDIR)/debian/install \
-		 $(CURDIR)/debian/$(PKG_name).upstart \
 	     $(CURDIR)/debian/dirs \
 		 $(CURDIR)/debian/preinst \
 		 $(CURDIR)/debian/postinst \
