@@ -67,11 +67,6 @@ if ! $has_intel || ! $has_nvidia; then
     exit 0
 fi
 
-if [ -e $prime_power ] && [ "`cat $prime_power | cut -d " " -f2`" = "OFF" ]; then
-    echo "Not offloading rendering to disabled Nvidia"
-    exit 0
-fi
-
 # Check the xrandr version
 randr_ver="$(xrandr -v)"
 client=$(echo "$randr_ver" | grep "program" | awk '{print $NF}' | cut -d. -f2)
