@@ -16,15 +16,22 @@ author		"Alberto Milone <alberto.milone@canonical.com>"
 start on starting lightdm
 
 script
-    LOG=/var/log/nvidia_prime.log
+    LOG=/var/log/nvidia-prime-upstart.log
     prime_settings=/etc/lightdm/hybrid_default
     prime_power=/proc/acpi/bbswitch
 
     # Remove any previous logs
     rm -f $LOG
 
+    if lsmod | grep nouveau > /dev/null; then
+        # exit if nouveau is in use
+        echo "Sorry but nvidia-prime does not work with the nouveau driver" \
+             > $LOG 2>&1
+        exit 0
+    fi
+
     if [ ! -e $prime_settings ]; then
-        echo "No settings for prime can be found in $prime_settings" \
+        echo "No settings for nvidia-prime can be found in $prime_settings" \
          > $LOG 2>&1
         exit 0
     fi
@@ -47,24 +54,19 @@ script
 
 
     if [ "$action" = "ON" ]; then
-        # Get the BusID of NVIDIA
-        bus_id="`/usr/bin/get-nvidia-id`"
-        # Set up a xorg.conf
-        sed -e 's|#BUSID#|$bus_id|g' \
-        #XORG_TEMPLATE# \
-        > #XORG_CONF#
+        echo "Configuring xorg.conf" \
+         >> $LOG 2>&1
+        /usr/bin/prime-xconfig on
     elif [ "$action" = "OFF" ]; then
+        echo "Moving xorg.conf away" \
+         >> $LOG 2>&1
+        /usr/bin/prime-xconfig off
+
         # Do we need to take action?
         if [ "$action" = "$nvidia_status" ]; then
-            echo "No action required to get PRIME to work" \
+            echo "No action required to get nvidia-prime to work" \
              >> $LOG 2>&1
             exit 0
-        fi
-
-        # Move away xorg.conf
-        now=$(date +"%m%d%Y")
-        if [ -f "#XORG_CONF#" ]; then
-            mv #XORG_CONF# #XORG_CONF#.$now
         fi
 
         # Disable the card
