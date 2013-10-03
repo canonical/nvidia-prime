@@ -35,6 +35,25 @@ display-setup-script\=\/sbin\/hybrid-power/g" \
 display-setup-script\=\/sbin\/hybrid-power' \
             > "$lightdm_orig_conf"
         fi
+
+        # Read the file again
+        lightdm_orig="$(cat $lightdm_orig_conf)"
+
+        # See if a display stopped script is already
+        # in use
+        if echo "$lightdm_orig" | \
+             grep "display-stopped-script"; then
+            echo "$lightdm_orig" | \
+            sed "s/.*display-stopped-script.*/\
+display-stopped-script\=\/sbin\/hybrid-switch/g" \
+            > "$lightdm_orig_conf"
+        else
+            # Add a line after the pattern
+            echo "$lightdm_orig" | \
+            sed '/.*display-setup-script.*/ a\
+display-stopped-script\=\/sbin\/hybrid-switch' \
+            > "$lightdm_orig_conf"
+        fi
     else
         # Let's create a configuration file
         # from scratch
@@ -43,6 +62,7 @@ display-setup-script\=\/sbin\/hybrid-power' \
 greeter-session=unity-greeter
 user-session=ubuntu
 display-setup-script=/sbin/hybrid-power
+display-stopped-script=/sbin/hybrid-switch
 EOF
     fi
 }
