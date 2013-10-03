@@ -1,2 +1,3 @@
 #LIGHTDM_CONF_FILENAME_D# #LIGHTDM_CONF_DIR_D#
 hybrid-power /sbin
+hybrid-switch /sbin
