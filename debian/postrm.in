@@ -42,6 +42,9 @@ case "$1" in
         if [ ! "$1" = "upgrade" ]; then
             # Remove the display-setup-script line
             remove_hybrid_script
+
+            # Remove the settings
+            rm -f /etc/lightdm/hybrid_default
         fi
     ;;
 
