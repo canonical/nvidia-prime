@@ -72,6 +72,10 @@ case "$1" in
     install|upgrade)
         # Insert the display-setup-script line
         add_hybrid_script
+
+        if [ ! -f /etc/lightdm/hybrid_default ]; then
+            echo "on" > /etc/lightdm/hybrid_default
+        fi
     ;;
 
     abort-upgrade)
