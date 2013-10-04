@@ -9,11 +9,15 @@
 # that the NVIDIA card is disabled before lightdm
 # starts X if system settings require so.
 #
+# On system shutdown we remove bbswitch and re-enable
+# the NVIDIA card.
+#
 
 description	"NVIDIA PRIME Power Saving Mode"
 author		"Alberto Milone <alberto.milone@canonical.com>"
 
 start on starting lightdm
+stop on runlevel [016]
 
 script
     LOG=/var/log/nvidia-prime-upstart.log
@@ -40,7 +44,7 @@ script
         echo "No bbswitch can be found 1st attempt" \
          >> $LOG 2>&1
         # Load bbswitch
-        /sbin/modprobe bbswitch || true
+        /sbin/modprobe bbswitch load_state=0 unload_state=1 || true
         # Try again
         if [ ! -e $prime_power ]; then
             echo "No bbswitch can be found 2nd attempt" \
@@ -79,4 +83,8 @@ script
     fi
 end script
 
-
+pre-stop script
+    if lsmod | grep bbswitch > /dev/null; then
+        /sbin/rmmod bbswitch
+    fi
+end script
