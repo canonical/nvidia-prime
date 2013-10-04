@@ -3,3 +3,4 @@ xorg.template #LIGHTDM_CUSTOM_CONF_DIR#
 hybrid-power /sbin
 hybrid-switch /sbin
 prime-xconfig /sbin
+prime-select /usr/bin
