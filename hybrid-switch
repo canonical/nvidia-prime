@@ -39,7 +39,7 @@ fi
 
 if ! lsmod | grep bbswitch > /dev/null; then
     # Try to load bbswitch
-    /sbin/modprobe bbswitch || true
+    /sbin/modprobe bbswitch load_state=-1 unload_state=1 || true
 fi
 
 if [ ! -e $prime_power ]; then
@@ -55,11 +55,11 @@ action="`cat $prime_settings`"
 action="$(echo "$action" | /usr/bin/tr '[:upper:]' '[:lower:]')"
 
 # Always set up xorg.conf
-if [ "$action" = "ON" ]; then
+if [ "$action" = "on" ]; then
     echo "Configuring xorg.conf" \
      >> $LOG 2>&1
     /sbin/prime-xconfig on
-elif [ "$action" = "OFF" ]; then
+elif [ "$action" = "off" ]; then
     echo "Moving xorg.conf away" \
      >> $LOG 2>&1
     /sbin/prime-xconfig off
