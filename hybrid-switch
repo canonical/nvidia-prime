@@ -70,13 +70,16 @@ if [ "$action" = "$nvidia_status" ]; then
     exit 0
 fi
 
-if [ "$action" = "ON" ]; then
+# We support both uppercase and lowercase
+action="$(echo "$action" | /usr/bin/tr -s '[:upper:]' '[:lower:]')"
+
+if [ "$action" = "on" ]; then
     echo "Enabling the NVIDIA card" \
          > $LOG 2>&1
     echo "ON" > /proc/acpi/bbswitch
     /sbin/modprobe nvidia || true
     exit 0
-elif [ "$action" = "OFF" ]; then
+elif [ "$action" = "off" ]; then
     echo "Disabling the NVIDIA card" \
          > $LOG 2>&1
     /sbin/rmmod nvidia || true
