@@ -52,12 +52,14 @@ script
     nvidia_status="`cat $prime_power | cut -d " " -f2`"
     action="`cat $prime_settings`"
 
+    # We support both uppercase and lowercase
+    action="$(echo "$action" | /usr/bin/tr -s '[:upper:]' '[:lower:]')"
 
-    if [ "$action" = "ON" ]; then
+    if [ "$action" = "on" ]; then
         echo "Configuring xorg.conf" \
          >> $LOG 2>&1
         /sbin/prime-xconfig on
-    elif [ "$action" = "OFF" ]; then
+    elif [ "$action" = "off" ]; then
         echo "Moving xorg.conf away" \
          >> $LOG 2>&1
         /sbin/prime-xconfig off
