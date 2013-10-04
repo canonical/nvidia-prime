@@ -44,7 +44,7 @@ script
         echo "No bbswitch can be found 1st attempt" \
          >> $LOG 2>&1
         # Load bbswitch
-        /sbin/modprobe bbswitch load_state=0 unload_state=1 || true
+        /sbin/modprobe bbswitch load_state=-1 unload_state=1 || true
         # Try again
         if [ ! -e $prime_power ]; then
             echo "No bbswitch can be found 2nd attempt" \
