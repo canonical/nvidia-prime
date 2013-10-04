@@ -126,6 +126,7 @@ class Alternatives:
 class Switcher(object):
 
     def __init__(self):
+        self._power_profile_path = '/etc/lightdm/hybrid_default'
         self._supported_architectures = {'i386': 'i386', 'amd64': 'x86_64'}
         main_arch = self._get_architecture()
         other_arch = self._supported_architectures.values()[
@@ -216,10 +217,18 @@ class Switcher(object):
 
         return True
 
-    def _check_settings(self):
-        # Check that nvidia-flavour and nvidia-flavour-prime
-        # are available and that one of them is in use
-        pass
+    def _write_profile(self, profile):
+        if profile == 'intel':
+            nvidia_power = 'off'
+        elif profile == 'nvidia':
+            nvidia_power = 'on'
+        else:
+            return False
+
+        # Write the settings to the file
+        settings = open(self._power_profile_path, 'w')
+        settings.write('%s\n' % nvidia_power)
+        settings.close()
 
 
     def enable_profile(self, profile):
@@ -266,7 +275,13 @@ class Switcher(object):
                     target_driver = '%s-prime' % current_driver
                 else:
                     target_driver = current_driver.replace('-prime', '')
-                return self.enable_alternative(target_driver)
+
+                if self.enable_alternative(target_driver):
+                    # Write the settings to the config file
+                    self._write_profile(profile)
+                    return True
+                else:
+                    return False
         else:
             print 'unknown'
             sys.stderr.write('Error: alternatives are not set up properly')
