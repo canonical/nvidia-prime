@@ -46,7 +46,7 @@ if [ "$action" = "on" ]; then
     # Get the BusID of NVIDIA
     bus_id=$(nv_get_id)
     # Set up a xorg.conf
-    sed -e 's|#BUSID#|$bus_id|g' \
+    sed -e "s|#BUSID#|$bus_id|g" \
     $xorg_template > $xorg_conf
 elif [ "$action" = "off" ]; then
     # Move away xorg.conf
