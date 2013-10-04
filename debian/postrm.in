@@ -29,6 +29,11 @@ remove_hybrid_script () {
         echo "$lightdm_orig" | \
         sed "/.*display-setup-script.*/d" \
         > "$lightdm_orig_conf"
+
+        lightdm_orig="$(cat $lightdm_orig_conf)"
+        echo "$lightdm_orig" | \
+        sed "/.*display-stopped-script.*/d" \
+        > "$lightdm_orig_conf"
     fi
 }
 
