@@ -57,7 +57,7 @@ script
     action="`cat $prime_settings`"
 
     # We support both uppercase and lowercase
-    action="$(echo "$action" | /usr/bin/tr -s '[:upper:]' '[:lower:]')"
+    action="$(echo "$action" | /usr/bin/tr '[:upper:]' '[:lower:]')"
 
     if [ "$action" = "on" ]; then
         echo "Configuring xorg.conf" \

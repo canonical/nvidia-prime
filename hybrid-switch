@@ -51,6 +51,8 @@ fi
 
 nvidia_status="`cat $prime_power | cut -d " " -f2`"
 action="`cat $prime_settings`"
+# We support both uppercase and lowercase
+action="$(echo "$action" | /usr/bin/tr '[:upper:]' '[:lower:]')"
 
 # Always set up xorg.conf
 if [ "$action" = "ON" ]; then
@@ -69,9 +71,6 @@ if [ "$action" = "$nvidia_status" ]; then
          > $LOG 2>&1
     exit 0
 fi
-
-# We support both uppercase and lowercase
-action="$(echo "$action" | /usr/bin/tr -s '[:upper:]' '[:lower:]')"
 
 if [ "$action" = "on" ]; then
     echo "Enabling the NVIDIA card" \
