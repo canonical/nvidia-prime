@@ -27,13 +27,13 @@ add_hybrid_script () {
              grep "display-setup-script"; then
             echo "$lightdm_orig" | \
             sed "s/.*display-setup-script.*/\
-display-setup-script\=\/sbin\/hybrid-power/g" \
+display-setup-script\=\/sbin\/prime-offload/g" \
             > "$lightdm_orig_conf"
         else
             # Add a line after the pattern
             echo "$lightdm_orig" | \
             sed '/.*user-session.*/ a\
-display-setup-script\=\/sbin\/hybrid-power' \
+display-setup-script\=\/sbin\/prime-offload' \
             > "$lightdm_orig_conf"
         fi
 
@@ -62,7 +62,7 @@ display-stopped-script\=\/sbin\/hybrid-switch' \
 [SeatDefaults]
 greeter-session=unity-greeter
 user-session=ubuntu
-display-setup-script=/sbin/hybrid-power
+display-setup-script=/sbin/prime-offload
 display-stopped-script=/sbin/hybrid-switch
 EOF
     fi
