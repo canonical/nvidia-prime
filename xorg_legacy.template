@@ -15,10 +15,10 @@ EndSection
 Section "Screen"
     Identifier "nvidia"
     Device "nvidia"
-    # The internal display might not be connected
-    # to the nvidia card but we definitely want
-    # to be able to connect external displays later
-    Option "AllowEmptyInitialConfiguration" "on"
+    # Uncomment this line if your computer has no display devices connected to
+    # the NVIDIA GPU.  Leave it commented if you have display devices
+    # connected to the NVIDIA GPU that you would like to use.
+    Option "UseDisplayDevice" "none"
 EndSection
 
 Section "Device"
