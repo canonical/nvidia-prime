@@ -4,4 +4,5 @@ xorg_legacy.template #LIGHTDM_CUSTOM_CONF_DIR#
 prime-offload /sbin
 prime-switch /sbin
 prime-xconfig /sbin
+get-quirk-options /sbin
 prime-select /usr/bin

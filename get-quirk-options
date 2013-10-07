@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+# Copyright 2013 Canonical Ltd.
+#
+# Author: Alberto Milone <alberto.milone@canonical.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+LOG="/var/log/prime-quirks.log"
+quirks="/etc/prime-quirks"
+dmi_prod_ver_path="/sys/class/dmi/id/product_version"
+
+additional_opts=""
+
+if [ -s "$quirks" ] && [ -s "$dmi_prod_ver_path" ]; then
+
+    dmi_prod_ver="`cat "$dmi_prod_ver_path"`"
+
+    while read line; do
+        if [ -n "$line" ] && [ -n "`echo "$line" | grep -v "#"`" ]; then
+            product="`echo "$line" | cut -d '"' -f 2`"
+            if [ "$dmi_prod_ver" = "$product" ]; then
+                options="`echo "$line" | cut -d '"' -f 4`"
+                echo "Applying quirk for $product\n$options" \
+                > $LOG 2>&1
+                additional_opts="$options"
+                break
+            fi
+        fi
+
+    done < "$quirks"
+fi
+echo "$additional_opts"
+
