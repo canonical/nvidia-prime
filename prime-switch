@@ -38,8 +38,9 @@ if [ ! -e $prime_settings ]; then
 fi
 
 if ! lsmod | grep bbswitch > /dev/null; then
+    opts="`/sbin/get-quirk-options`"
     # Try to load bbswitch
-    /sbin/modprobe bbswitch load_state=-1 unload_state=1 || true
+    /sbin/modprobe bbswitch load_state=-1 unload_state=1 "$opts" || true
 fi
 
 if [ ! -e $prime_power ]; then
