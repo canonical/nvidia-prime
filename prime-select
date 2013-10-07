@@ -126,7 +126,7 @@ class Alternatives:
 class Switcher(object):
 
     def __init__(self):
-        self._power_profile_path = '/etc/lightdm/hybrid_default'
+        self._power_profile_path = '/etc/prime-discrete'
         self._supported_architectures = {'i386': 'i386', 'amd64': 'x86_64'}
         main_arch = self._get_architecture()
         other_arch = self._supported_architectures.values()[
