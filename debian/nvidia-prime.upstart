@@ -43,8 +43,9 @@ script
     if [ ! -e $prime_power ]; then
         echo "No bbswitch can be found 1st attempt" \
          >> $LOG 2>&1
+        opts="`/sbin/get-quirk-options`"
         # Load bbswitch
-        /sbin/modprobe bbswitch load_state=-1 unload_state=1 || true
+        /sbin/modprobe bbswitch load_state=-1 unload_state=1 "$opts" || true
         # Try again
         if [ ! -e $prime_power ]; then
             echo "No bbswitch can be found 2nd attempt" \
