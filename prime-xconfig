@@ -37,8 +37,23 @@ nv_get_id() {
     printf "%d:%d:%d\n" $id_0 $id_1 $id_1
 }
 
-xorg_conf=/etc/X11/xorg.conf
-xorg_template=/usr/share/nvidia-prime/xorg.template
+# The first nvidia series which works when no displays are
+# connected when X starts
+empty_initial_ver=331
+
+# Check the nvidia driver series in use
+current_ver="`update-alternatives --query x86_64-linux-gnu_gl_conf | \
+             grep ^Value | sed 's/[^0-9]//g'`"
+
+if [ -n "$current_ver" ] && \
+   [ $current_ver -ge $empty_initial_ver ]; then
+   template="xorg.template"
+else
+   template="xorg_legacy.template"
+fi
+
+xorg_conf="/etc/X11/xorg.conf"
+xorg_template="/usr/share/nvidia-prime/$template"
 
 action="$1"
 
