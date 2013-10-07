@@ -49,7 +49,7 @@ case "$1" in
             remove_hybrid_script
 
             # Remove the settings
-            rm -f /etc/lightdm/hybrid_default
+            rm -f /etc/prime-discrete
         fi
     ;;
 

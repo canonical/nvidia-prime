@@ -21,7 +21,7 @@ stop on runlevel [016]
 
 script
     LOG=/var/log/nvidia-prime-upstart.log
-    prime_settings=/etc/lightdm/hybrid_default
+    prime_settings=/etc/prime-discrete
     prime_power=/proc/acpi/bbswitch
 
     # Remove any previous logs

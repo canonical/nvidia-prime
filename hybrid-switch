@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 LOG=/var/log/lightdm_prime_out.log
-prime_settings=/etc/lightdm/hybrid_default
+prime_settings=/etc/prime-discrete
 prime_power=/proc/acpi/bbswitch
 
 # Remove any previous logs
