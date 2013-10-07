@@ -1,6 +1,6 @@
 #LIGHTDM_CONF_FILENAME_D# #LIGHTDM_CONF_DIR_D#
 xorg.template #LIGHTDM_CUSTOM_CONF_DIR#
 prime-offload /sbin
-hybrid-switch /sbin
+prime-switch /sbin
 prime-xconfig /sbin
 prime-select /usr/bin
