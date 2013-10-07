@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 LOG="/var/log/prime-quirks.log"
-quirks="/etc/prime-quirks"
+quirks="/usr/share/nvidia-prime/prime-quirks"
 dmi_prod_ver_path="/sys/class/dmi/id/product_version"
 
 additional_opts=""
