@@ -17,14 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-PRIME_LOG=/var/log/lightdm_prime.log
+LOG=/var/log/prime-offload.log
 prime_power=/proc/acpi/bbswitch
 
 # Only for NVIDIA's proprietary driver
 if ! lsmod | grep nvidia > /dev/null; then
     # Sorry the driver is not is loaded
     echo "Sorry the nvidia kernel module is not is loaded" \
-         > $PRIME_LOG 2>&1
+         > $LOG 2>&1
     exit 0
 fi
 
@@ -63,7 +63,7 @@ done
 
 if ! $has_intel || ! $has_nvidia; then
     echo "Sorry we only support Intel+Nvidia" \
-         > $PRIME_LOG 2>&1
+         > $LOG 2>&1
     exit 0
 fi
 
@@ -86,7 +86,7 @@ elif [ "$client" -eq 3 -a "$client_point" -eq 5 \
 else
     # client and server ver < 1.4
     echo "Sorry we only support randr 1.4 or higher" \
-         > $PRIME_LOG 2>&1
+         > $LOG 2>&1
     exit 0
 fi
 

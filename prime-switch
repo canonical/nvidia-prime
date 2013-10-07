@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-LOG=/var/log/lightdm_prime_out.log
+LOG=/var/log/prime-switch.log
 prime_settings=/etc/prime-discrete
 prime_power=/proc/acpi/bbswitch
 
