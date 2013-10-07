@@ -1,0 +1,8 @@
+# Quirks file for nvidia-prime
+#
+# You can add quirks using the following format:
+#
+#   "dmi product version" "bbswitch options"
+#
+"ThinkPad T410" "skip_optimus_dsm=1"
+"ThinkPad T410s" "skip_optimus_dsm=1"
