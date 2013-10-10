@@ -241,7 +241,7 @@ class Switcher(object):
             alternative_other = str(alternatives[1])
         except IndexError:
             # No alternative exists
-            sys.stderr.write('Error: the required alternatives do not exist')
+            sys.stderr.write('Error: the required alternatives do not exist\n')
             return False
 
         # The alternatives we are looking for are both provided by
@@ -261,7 +261,7 @@ class Switcher(object):
                 alt_driver = '%s-prime' % current_driver
                 if (not self._gl_switcher.get_alternative_by_name(alt_driver) or
                     not self._gl_switcher_other.get_alternative_by_name(alt_driver)):
-                    sys.stderr.write('Error: %s does not support PRIME power management')
+                    sys.stderr.write('Error: %s does not support PRIME power management\n')
                     return False
 
             # No need to do anything if we're already using the desired
@@ -283,8 +283,7 @@ class Switcher(object):
                 else:
                     return False
         else:
-            print 'unknown'
-            sys.stderr.write('Error: alternatives are not set up properly')
+            sys.stderr.write('Error: alternatives are not set up properly\n')
             return False
 
 
