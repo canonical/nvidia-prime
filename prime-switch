@@ -60,10 +60,18 @@ if [ "$action" = "on" ]; then
     echo "Configuring xorg.conf" \
      >> $LOG 2>&1
     /sbin/prime-xconfig on
+    echo "Configuring alternatives" \
+     >> $LOG 2>&1
+    # Make sure the alternatives are in sync
+    /usr/bin/prime-select nvidia
 elif [ "$action" = "off" ]; then
     echo "Moving xorg.conf away" \
      >> $LOG 2>&1
     /sbin/prime-xconfig off
+    echo "Configuring alternatives" \
+     >> $LOG 2>&1
+    # Make sure the alternatives are in sync
+    /usr/bin/prime-select intel
 fi
 
 # Do we need to call bbswitch?
