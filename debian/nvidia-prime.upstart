@@ -67,7 +67,8 @@ script
         echo "Configuring alternatives" \
          >> $LOG 2>&1
         # Make sure the alternatives are in sync
-        /usr/bin/prime-select nvidia
+        /usr/bin/prime-select nvidia  \
+         >> $LOG 2>&1
     elif [ "$action" = "off" ]; then
         echo "Moving xorg.conf away" \
          >> $LOG 2>&1
@@ -75,7 +76,8 @@ script
         echo "Configuring alternatives" \
          >> $LOG 2>&1
         # Make sure the alternatives are in sync
-        /usr/bin/prime-select intel
+        /usr/bin/prime-select intel  \
+         >> $LOG 2>&1
 
         # Do we need to take action?
         if [ "$action" = "$nvidia_status" ]; then
