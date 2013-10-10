@@ -68,8 +68,12 @@ class Alternatives:
 
         return alternatives
 
-    def get_current_alternative(self):
-        '''Get the alternative in use'''
+    def get_current_alternative(self, check_status=False):
+        '''Get the alternative in use
+
+        If check_status is True, then only the status will
+        be reported (i.e. either "manual" or "auto")
+        '''
         dev_null = open('/dev/null', 'w')
         current_alternative = None
         p1 = Popen([self._command, '--query', self._master_link],
@@ -77,9 +81,13 @@ class Alternatives:
         p = p1.communicate()[0]
         dev_null.close()
         c = p.split('\n')
+        if check_status:
+            pattern = 'Status:'
+        else:
+            pattern = 'Value:'
         for line in c:
-            if line.strip().startswith('Value:'):
-                return line.replace('Value:', '').strip()
+            if line.strip().startswith(pattern):
+                return line.replace(pattern, '').strip()
         return None
 
     def get_alternative_by_name(self, name, ignore_pattern=None):
@@ -167,8 +175,7 @@ class Switcher(object):
         subprocess.call(['update-initramfs', '-u', '-k', os.uname()[2]])
 
     def _get_current_alternative(self):
-        # This is a list as the 2nd item could be another alternative
-        # we might be looking for e.g. an xorg.conf alternative
+        # This is a list as the 2nd item belongs to another architecture
         alternatives = [None, None]
         raw_gl_alternative = self._gl_switcher.get_current_alternative()
         raw_gl_alternative_other = self._gl_switcher_other.get_current_alternative()
@@ -177,6 +184,20 @@ class Switcher(object):
             alternatives[0] = self._simplify_gl_alternative_name(raw_gl_alternative)
         if (raw_gl_alternative_other != None):
             alternatives[1] = self._simplify_gl_alternative_name(raw_gl_alternative_other)
+
+        return alternatives
+
+    def _get_current_alternative_status(self):
+        '''Get the current status i.e. either "auto" or "manual"'''
+        # This is a list as the 2nd item belongs to another architecture
+        alternatives = [None, None]
+        raw_gl_alternative = self._gl_switcher.get_current_alternative(True)
+        raw_gl_alternative_other = self._gl_switcher_other.get_current_alternative(True)
+
+        if (raw_gl_alternative != None):
+            alternatives[0] = raw_gl_alternative
+        if (raw_gl_alternative_other != None):
+            alternatives[1] = raw_gl_alternative_other
 
         return alternatives
 
@@ -264,26 +285,46 @@ class Switcher(object):
                     sys.stderr.write('Error: %s does not support PRIME power management\n')
                     return False
 
+            # Are alternatives in "auto" or in "manual" mode?
+            status = self._get_current_alternative_status()
+
             # No need to do anything if we're already using the desired
-            # profile
-            if profile == current_profile:
+            # profile, provided that alternatives are not in "auto" mode
+            if profile == current_profile and 'auto' not in status:
                 print 'Info: the %s profile is already in use' % (profile)
                 return True
-            else:
-                # Enable the desired alternative
-                if profile == 'intel':
-                    target_driver = '%s-prime' % current_driver
-                else:
-                    target_driver = current_driver.replace('-prime', '')
+        elif (alternative != alternative_other and
+            'nvidia' in alternative):
+            # Something's wrong here
+            # e.g. nvidia-319 on x86_64 and mesa on i386
+            print 'Info: the alternatives do not match'
+            # The first alternative shows the driver in use
+            current_driver = alternative
 
-                if self.enable_alternative(target_driver):
-                    # Write the settings to the config file
-                    self._write_profile(profile)
-                    return True
-                else:
+            if 'prime' not in alternative:
+                # Check that the alternative for the intel profile
+                # exists. If it doesn't, then the driver does not
+                # support power management with PRIME
+                alt_driver = '%s-prime' % current_driver
+                if (not self._gl_switcher.get_alternative_by_name(alt_driver) or
+                    not self._gl_switcher_other.get_alternative_by_name(alt_driver)):
+                    sys.stderr.write('Error: %s does not support PRIME power management\n')
                     return False
         else:
             sys.stderr.write('Error: alternatives are not set up properly\n')
+            return False
+
+        # Enable the desired alternative
+        if profile == 'intel':
+            target_driver = '%s-prime' % current_driver
+        else:
+            target_driver = current_driver.replace('-prime', '')
+
+        if self.enable_alternative(target_driver):
+            # Write the settings to the config file
+            self._write_profile(profile)
+            return True
+        else:
             return False
 
 
