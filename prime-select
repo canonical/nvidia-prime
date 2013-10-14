@@ -1,18 +1,18 @@
 #!/usr/bin/python
 #
-#       switchlibGL
+#       prime-select
 #
-#       Copyright 2011 Canonical Ltd.
+#       Copyright 2013 Canonical Ltd.
 #       Author: Alberto Milone <alberto.milone@canonical.com>
 #
-#       Script to switch between AMD and Intel graphics driver libraries.
+#       Script to switch between NVIDIA and Intel graphics driver libraries.
 #
 #       Usage:
-#           switchlibGL   amd|intel|query
-#           amd:   switches to AMD's version of libGL.so
+#           prime-select   nvidia|intel|query
+#           nvidia:   switches to NVIDIA's version of libGL.so
 #           intel: switches to the open-source version of libGL.so
 #           query: checks which version is currently active and writes
-#                  "amd", "intel" or "unknown" to the standard output
+#                  "nvidia", "intel" or "unknown" to the standard output
 #
 #       Permission is hereby granted, free of charge, to any person
 #       obtaining a copy of this software and associated documentation
@@ -342,7 +342,7 @@ def handle_query_error():
     exit(1)
 
 def usage():
-    sys.stderr.write("Usage: %s amd|intel|query\n" % (sys.argv[0]))
+    sys.stderr.write("Usage: %s nvidia|intel|query\n" % (sys.argv[0]))
 
 if __name__ == '__main__':
     try:
