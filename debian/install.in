@@ -7,3 +7,4 @@ prime-switch /sbin
 prime-xconfig /sbin
 get-quirk-options /sbin
 prime-select /usr/bin
+prime-supported /usr/bin

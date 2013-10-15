@@ -19,69 +19,23 @@
 #
 LOG=/var/log/prime-offload.log
 prime_power=/proc/acpi/bbswitch
-force_prime=/etc/force-prime
+prime_supported=/usr/bin/prime-supported
 
 # Remove any previous logs
 rm -f $LOG
 
-# We only support laptops by default,
-# you can override this check by creating
-# the /etc/force-prime file
-if [ -f "$force_prime" ]; then
-    echo "Force mode enabled. Skipping laptop check" >> $LOG 2>&1
-else
-    if [ -n "`ls -A /sys/class/power_supply/`" ] && \
-       [ -d "/proc/acpi/button/lid" ]; then
-        echo "Laptop detected" >> $LOG 2>&1
-    else
-        echo "Sorry but we only support laptops" >> $LOG 2>&1
-        exit 0
-    fi
+# Check hardware support here
+supported="`$prime_supported`"
+if [ -z "$supported" ]; then
+    echo "Sorry but your hardware configuration is not supported" \
+         >> $LOG 2>&1
+    exit 0
 fi
 
 # Only for NVIDIA's proprietary driver
 if ! lsmod | grep nvidia > /dev/null; then
     # Sorry the driver is not is loaded
     echo "Sorry the nvidia kernel module is not is loaded" \
-         >> $LOG 2>&1
-    exit 0
-fi
-
-# We only support intel + nvidia
-cards="$(lspci -n)"
-# the different classes as per pci.ids
-# Syntax:
-# C class   class_name
-#   subclass    subclass_name       <-- single tab
-#       prog-if  prog-if_name   <-- two tabs
-#C 03  Display controller
-#    00  VGA compatible controller
-#        00  VGA controller
-#        01  8514 controller
-#    01  XGA compatible controller
-#    02  3D controller
-#    80  Display controller
-gfx_300="$(echo "$cards" | grep 300)"
-gfx_301="$(echo "$cards" | grep 301)"
-gfx_302="$(echo "$cards" | grep 302)"
-gfx_380="$(echo "$cards" | grep 380)"
-
-has_nvidia=false
-has_intel=false
-
-for gfx_class in "$gfx_300" "$gfx_301" "$gfx_302" "$gfx_380"; do
-    if echo "$gfx_class" | egrep -q "8086"; then
-      # Intel detected
-      has_intel=true
-    fi
-    if echo "$gfx_class" | egrep -q "10de"; then
-      # Nvidia detected
-      has_nvidia=true
-    fi
-done
-
-if ! $has_intel || ! $has_nvidia; then
-    echo "Sorry we only support Intel+Nvidia" \
          >> $LOG 2>&1
     exit 0
 fi

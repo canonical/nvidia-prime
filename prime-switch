@@ -21,23 +21,17 @@ LOG=/var/log/prime-switch.log
 prime_settings=/etc/prime-discrete
 prime_power=/proc/acpi/bbswitch
 force_prime=/etc/force-prime
+prime_supported=/usr/bin/prime-supported
 
 # Remove any previous logs
 rm -f $LOG
 
-# We only support laptops by default,
-# you can override this check by creating
-# the /etc/force-prime file
-if [ -f "$force_prime" ]; then
-    echo "Force mode enabled. Skipping laptop check" >> $LOG 2>&1
-else
-    if [ -n "`ls -A /sys/class/power_supply/`" ] && \
-       [ -d "/proc/acpi/button/lid" ]; then
-        echo "Laptop detected" >> $LOG 2>&1
-    else
-        echo "Sorry but we only support laptops" >> $LOG 2>&1
-        exit 0
-    fi
+# Check hardware support here
+supported="`$prime_supported`"
+if [ -z "$supported" ]; then
+    echo "Sorry but your hardware configuration is not supported" \
+         >> $LOG 2>&1
+    exit 0
 fi
 
 if lsmod | grep nouveau > /dev/null; then
