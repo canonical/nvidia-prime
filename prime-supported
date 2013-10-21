@@ -20,8 +20,17 @@
 LOG=/var/log/prime-supported.log
 force_prime=/etc/force-prime
 
+if [ -n "$1" ]; then
+    LOG="$1"
+fi
+
 # Remove any previous logs
-rm -f $LOG
+# as long as the log is an actual
+# file. In some cases we may pass
+# it /dev/stdout which is a link
+if [ -f $LOG ]; then
+    rm -f $LOG
+fi
 
 # We only support laptops by default,
 # you can override this check by creating
