@@ -87,6 +87,6 @@ xrandr --setprovideroutputsource "$sink" "$src"
 xrandr --auto
 
 # Do not move up. Only now xrandr shows the outputs
-lvds=$(xrandr | grep -i "lvds" | head -n1 |cut -d " " -f 1)
+lvds=$(xrandr | grep -i -e "lvds" -e "edp" | head -n1 |cut -d " " -f 1)
 xrandr --output "$lvds" --off
 xrandr --output "$lvds" --auto
