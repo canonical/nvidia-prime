@@ -34,7 +34,7 @@ nv_get_id() {
     id_1="$(echo $nvidia_id | cut -d: -f2)"
     id_2="$(echo $nvidia_id | cut -d: -f3)"
 
-    printf "%d:%d:%d\n" $id_0 $id_1 $id_1
+    printf "%d:%d:%d\n" "${id_0#0}" "${id_1#0}" "${id_2#0}"
 }
 
 # The first nvidia series which works when no displays are
