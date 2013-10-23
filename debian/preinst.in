@@ -16,8 +16,7 @@ set -e
 lightdm_orig_conf=#LIGHTDM_CONF_FILE#
 
 add_hybrid_script () {
-    if [ -f "$lightdm_orig_conf" -a \
-         ! -s "$lightdm_orig_conf" ]; then
+    if [ -s "$lightdm_orig_conf" ]; then
         # Get the file
         lightdm_orig="$(cat $lightdm_orig_conf)"
 
