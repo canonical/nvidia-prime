@@ -33,7 +33,7 @@ id_0="$(echo $nvidia_id | cut -d: -f1)"
 id_1="$(echo $nvidia_id | cut -d: -f2)"
 id_2="$(echo $nvidia_id | cut -d: -f3)"
 
-bus_id=$(printf "%d:%d:%d\n" $id_0 $id_1 $id_1)
+bus_id=$(printf "%d:%d:%d\n" "${id_0#0}" "${id_1#0}" "${id_2#0}")
 
 now=$(date +"%m%d%Y")
 
