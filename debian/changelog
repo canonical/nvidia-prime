@@ -1,8 +1,11 @@
-nvidia-prime (0.4.2) UNRELEASED; urgency=low
+nvidia-prime (0.4.2) trusty; urgency=low
 
-  * 
+  * debian/postinst.in: fix issue with printf
+    - Apparently the printf command treats string values
+      with leading zeros as octal. Work around this by
+      removing any leading zeros (LP: #1219650).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Wed, 23 Oct 2013 15:07:20 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 23 Oct 2013 15:45:24 +0200
 
 nvidia-prime (0.4.1) trusty; urgency=low
 
