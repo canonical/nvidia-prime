@@ -1,8 +1,12 @@
-nvidia-prime (0.5) UNRELEASED; urgency=low
+nvidia-prime (0.4.1) trusty; urgency=low
 
-  * 
+  * debian/preinst.in:
+    - Remove leftover in the test condition. This was
+      causing the lightdm.conf file to be rewritten
+      every time. This is a serious problem on the
+      different Ubuntu flavours (LP: #1224098).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Wed, 23 Oct 2013 12:34:50 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 23 Oct 2013 13:03:55 +0200
 
 nvidia-prime (0.4) saucy; urgency=low
 
