@@ -1,3 +1,9 @@
+nvidia-prime (0.5) UNRELEASED; urgency=low
+
+  * 
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Mon, 25 Nov 2013 19:14:37 +0100
+
 nvidia-prime (0.4.2) trusty; urgency=low
 
   * debian/postinst.in: fix issue with printf
