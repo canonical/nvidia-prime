@@ -1,8 +1,47 @@
-nvidia-prime (0.5) UNRELEASED; urgency=low
+nvidia-prime (0.5) trusty; urgency=low
 
-  * 
+  * debian/control:
+    - Depend on bbswitch-dkms and upstart.
+    - Depend on lightdm (>= 1.9.1).
+    - Build only for i386 and amd64.
+  * debian/install.in:
+    - Install the new components.
+  * debian/nvidia-prime.upstart:
+    - Make sure that NVIDIA is always enabled on shutdown.
+      This will avoid issues with the BIOS.
+    - Make sure that bbswitch does not disable nvidia when
+      loading.
+    - Set up xorg.conf on boot.
+  * debian/preinst.in:
+    - Create a display-stopped-script entry in lightdm.conf.
+    - Create /etc/lightdm/hybrid_default.
+  * debian/postinst.in:
+    - Remove it.
+  * debian/postrm.in:
+    - Remove /etc/lightdm/hybrid_default on package removal.
+    - Remove the display-stopped-script entry from
+      lightdm.conf.
+    - Restore the non-prime related alternative on removal.
+  * New upstream release:
+    - Improved hardware detection. The package won't change
+      anything if the hardware configuration is not
+      supported. We only support laptops with NVIDIA
+      optimus hardware and nvidia driver >= 319
+      (LP: #1249067).
+    - More robust system to deal with xorg.conf. Broken
+      xorg.conf files will be automatically restored to
+      a configuration that works with hybrid graphics.
+      Whether on boot or on log out, we always try to make
+      sure that the system is configured correctly.
+    - Added prime-select switcher to switch between the
+      integrated and the discrete GPU. This allows users
+      to disable the discrete GPU to save power. Users'
+      settings are now saved and applied on log out and
+      on boot.
+    - Added a quirk system to pass custom options to the
+      bbswitch module (see /etc/prime-quirks).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Mon, 25 Nov 2013 19:14:37 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 04 Dec 2013 16:23:32 +0100
 
 nvidia-prime (0.4.2) trusty; urgency=low
 
