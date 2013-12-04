@@ -18,7 +18,8 @@ Section "Screen"
     # The internal display might not be connected
     # to the nvidia card but we definitely want
     # to be able to connect external displays later
-    Option "AllowEmptyInitialConfiguration" "on"
+    #Option "AllowEmptyInitialConfiguration" "on"
+    Option "UseDisplayDevice" "none"
 EndSection
 
 Section "Device"
