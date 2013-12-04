@@ -37,6 +37,24 @@ remove_hybrid_script () {
     fi
 }
 
+get_current_alternative() {
+    master_link="$1"
+    value=""
+    alternatives=$(update-alternatives --query $master_link 2>/dev/null)
+    if [ -n "$alternatives" ]; then
+        #status=$(echo "$alternatives" | grep "Status:" | sed "s/Status: //g")
+        value=$(echo "$alternatives" | grep "Value:" | sed "s/Value: //g")
+    fi
+    echo "$value"
+}
+
+set_alternative() {
+    master_link="$1"
+    path="$2"
+    update-alternatives --set "$master_link" "$path" || true
+}
+
+
 case "$1" in
     purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
         # Remove the xorg.conf
@@ -50,6 +68,30 @@ case "$1" in
 
             # Remove the settings
             rm -f /etc/prime-discrete
+
+            # Restore the alternatives to a non prime
+            # configuration, if possible
+            host_arch_main=$(dpkg-architecture -qDEB_HOST_MULTIARCH)
+            host_arch_other=$( (echo "$host_arch_main" | \
+                                grep "i386" >/dev/null) && \
+                                echo "$host_arch_main" | \
+                                sed "s/i386/x86_64/" || \
+                                echo "$host_arch_main" | \
+                                sed "s/x86_64/i386/")
+            main_arch=""$host_arch_main"_gl_conf"
+            other_arch=""$host_arch_other"_gl_conf"
+            main_alternative="$(get_current_alternative "$main_arch")"
+            other_alternative="$(get_current_alternative "$other_arch")"
+
+            if echo "$main_alternative" | grep "prime"; then
+                fallback="$(echo "$main_alternative" | sed "s/-prime//g")"
+                set_alternative "$main_arch" "$fallback"
+            fi
+
+            if echo "$other_alternative" | grep "prime"; then
+                fallback="$(echo "$other_alternative" | sed "s/-prime//g")"
+                set_alternative "$other_arch" "$fallback"
+            fi
         fi
     ;;
 
