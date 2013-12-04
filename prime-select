@@ -230,11 +230,11 @@ class Switcher(object):
         if (alternative == alternative_other and
             'nvidia' in alternative):
             if 'prime' in alternative:
-                print 'intel'
+                sys.stdout.write('intel\n')
             else:
-                print 'nvidia'
+                sys.stdout.write('nvidia\n')
         else:
-            print 'unknown'
+            sys.stdout.write('unknown\n')
 
         return True
 
@@ -291,13 +291,13 @@ class Switcher(object):
             # No need to do anything if we're already using the desired
             # profile, provided that alternatives are not in "auto" mode
             if profile == current_profile and 'auto' not in status:
-                print 'Info: the %s profile is already in use' % (profile)
+                sys.stdout.write('Info: the %s profile is already in use\n' % (profile))
                 return True
         elif (alternative != alternative_other and
             'nvidia' in alternative):
             # Something's wrong here
             # e.g. nvidia-319 on x86_64 and mesa on i386
-            print 'Info: the alternatives do not match'
+            sys.stdout.write('Info: the alternatives do not match\n')
             # The first alternative shows the driver in use
             current_driver = alternative
 
