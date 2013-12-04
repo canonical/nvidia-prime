@@ -1,15 +1,13 @@
-nvidia-prime (0.5~hybrid0.0.1~preciseppa2) UNRELEASED; urgency=low
-
-  * 
-
- -- Alberto Milone <alberto.milone@canonical.com>  Wed, 04 Dec 2013 16:31:22 +0100
-
-nvidia-prime (0.5~hybrid0.0.1~preciseppa1) precise; urgency=low
+nvidia-prime (0.5~hybrid0.0.1) precise-proposed; urgency=low
 
   * New upstream release:
-    - Add support for power management.
+    - Add support for power management (LP: #1259237).
+  * debian/control:
+    - Depend on upstart, bbswitch, lsb-release, lightdm >= 1.2.3-0ubuntu2.4,
+      screen-resolution-extra (>= 0.14ubuntu2.1).
+    - Build only for i386 and amd64.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Fri, 25 Oct 2013 13:23:20 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Mon, 09 Dec 2013 19:37:56 +0100
 
 nvidia-prime (0.3~hybrid0.0.1) precise; urgency=low
 
