@@ -69,8 +69,11 @@ case "$1" in
             # Remove the settings
             rm -f /etc/prime-discrete
 
+
+
             # Restore the alternatives to a non prime
             # configuration, if possible
+            os_release="$(lsb_release -c | cut -d: -f2 | sed "s/\t//g")"
             host_arch_main=$(dpkg-architecture -qDEB_HOST_MULTIARCH)
             host_arch_other=$( (echo "$host_arch_main" | \
                                 grep "i386" >/dev/null) && \
@@ -84,14 +87,36 @@ case "$1" in
             other_alternative="$(get_current_alternative "$other_arch")"
 
             if echo "$main_alternative" | grep "prime"; then
-                fallback="$(echo "$main_alternative" | sed "s/-prime//g")"
-                set_alternative "$main_arch" "$fallback"
+                if [ "$os_release" = "precise" ]; then
+                    # In Precise multiple drivers can be installed at the
+                    # same time, so we simply switch back to the non-prime
+                    # alternative provided by the same driver package
+                    fallback="$(echo "$main_alternative" | sed "s/-prime//g")"
+                    set_alternative "$main_arch" "$fallback"
+                else
+                    # Drivers cannot be installed all at the
+                    # same time, therefore it is recommended
+                    # that we set the alternative back to
+                    # automatic mode.
+                    update-alternatives --auto "$main_arch" || true
+                fi
             fi
-
             if echo "$other_alternative" | grep "prime"; then
-                fallback="$(echo "$other_alternative" | sed "s/-prime//g")"
-                set_alternative "$other_arch" "$fallback"
+                if [ "$os_release" = "precise" ]; then
+                    # In Precise multiple drivers can be installed at the
+                    # same time, so we simply switch back to the non-prime
+                    # alternative provided by the same driver package
+                    fallback="$(echo "$other_alternative" | sed "s/-prime//g")"
+                    set_alternative "$other_arch" "$fallback"
+                else
+                    # Drivers cannot be installed all at the
+                    # same time, therefore it is recommended
+                    # that we set the alternative back to
+                    # automatic mode.
+                    update-alternatives --auto "$other_arch" || true
+                fi
             fi
+            LDCONFIG_NOTRIGGER=y ldconfig
         fi
     ;;
 
