@@ -40,10 +40,10 @@ remove_hybrid_script () {
 get_current_alternative() {
     master_link="$1"
     value=""
-    alternatives=$(update-alternatives --query $master_link 2>/dev/null)
+    alternatives="$(update-alternatives --query "$master_link" 2>/dev/null || true)"
     if [ -n "$alternatives" ]; then
         #status=$(echo "$alternatives" | grep "Status:" | sed "s/Status: //g")
-        value=$(echo "$alternatives" | grep "Value:" | sed "s/Value: //g")
+        value="$(echo "$alternatives" | grep "Value:" | sed "s/Value: //g")"
     fi
     echo "$value"
 }
@@ -68,8 +68,6 @@ case "$1" in
 
             # Remove the settings
             rm -f /etc/prime-discrete
-
-
 
             # Restore the alternatives to a non prime
             # configuration, if possible
