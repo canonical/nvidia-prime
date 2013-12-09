@@ -47,7 +47,7 @@ class Alternatives:
     def __init__(self, master_link):
         self._open_drivers_alternative = 'mesa/ld.so.conf'
         self._open_egl_drivers_alternative = 'mesa-egl/ld.so.conf'
-        self._command = 'update-alternatives'
+        self._command = '/usr/bin/update-alternatives'
         self._master_link = master_link
 
         # Make sure that the PATH environment variable is set
@@ -125,7 +125,7 @@ class Alternatives:
     def ldconfig(self):
         '''Call ldconfig'''
         try:
-            subprocess.check_call(['ldconfig'])
+            subprocess.check_call(['/sbin/ldconfig'])
         except CalledProcessError:
             return False
         return True
