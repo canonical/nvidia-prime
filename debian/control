@@ -9,7 +9,7 @@ Vcs-Browser: http://github.com/tseliot/nvidia-prime
 
 Package: nvidia-prime
 Architecture: i386 amd64
-Depends: lightdm (>= 1.2.3-0ubuntu2.4~preciseprime1), upstart,
+Depends: lightdm (>= 1.2.3-0ubuntu2.4), upstart,
  bbswitch-dkms, pciutils, ${shlibs:Depends}, ${misc:Depends}
 Conflicts: hybrid-graphics
 Replaces: hybrid-graphics
