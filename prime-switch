@@ -96,10 +96,15 @@ if [ "$action" = "on" ]; then
          >> $LOG 2>&1
     echo "ON" > /proc/acpi/bbswitch
     /sbin/modprobe nvidia || true
+    # Tell nvidia-persistence bbswitch is ready
+    /sbin/initctl emit bbswitch-ready
     exit 0
 elif [ "$action" = "off" ]; then
     echo "Disabling the NVIDIA card" \
          >> $LOG 2>&1
+    # Tell nvidia-persistenced the nvidia-card is about
+    # to be switched off
+    /sbin/initctl emit nvidia-off
     /sbin/rmmod nvidia || true
     echo "OFF" > /proc/acpi/bbswitch
     exit 0

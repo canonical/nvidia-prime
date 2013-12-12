@@ -19,6 +19,9 @@ author		"Alberto Milone <alberto.milone@canonical.com>"
 start on starting lightdm
 stop on runlevel [016]
 
+emits nvidia-off
+emits bbswitch-ready
+
 script
     LOG=/var/log/nvidia-prime-upstart.log
     prime_settings=/etc/prime-discrete
@@ -34,6 +37,10 @@ script
     if [ -z "$supported" ]; then
         echo "Sorry but your hardware configuration is not supported" \
              >> $LOG 2>&1
+        # We're probably dealing with a system with a single
+        # NVIDIA card here, so we make sure to start nvidia-persistence
+        # with some delay
+        /usr/bin/start-nvidia-persistenced
         exit 0
     fi
 
@@ -99,6 +106,9 @@ script
         # Disable the card
         echo "Disabling the NVIDIA card" \
          >> $LOG 2>&1
+        # Tell nvidia-persistenced the nvidia card is about
+        # to be switched off
+        /sbin/initctl emit nvidia-off
         /sbin/rmmod nvidia || true
         echo "OFF" > /proc/acpi/bbswitch
     fi
