@@ -1,3 +1,9 @@
+nvidia-prime (0.5.2) UNRELEASED; urgency=low
+
+  * 
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 20 Dec 2013 12:49:46 +0100
+
 nvidia-prime (0.5.1) trusty; urgency=low
 
   * debian/nvidia-prime.upstart, prime-switch:
