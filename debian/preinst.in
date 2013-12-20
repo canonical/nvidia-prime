@@ -14,6 +14,7 @@ set -e
 # the debian-policy package
 
 lightdm_orig_conf=#LIGHTDM_CONF_FILE#
+default_display_manager_file=/etc/X11/default-display-manager
 
 add_hybrid_script () {
     if [ -s "$lightdm_orig_conf" ]; then
@@ -69,8 +70,15 @@ EOF
 
 case "$1" in
     install|upgrade)
-        # Insert the display-setup-script line
-        add_hybrid_script
+        if [ -e "$default_display_manager_file" ]; then
+            default_path="$(cat $default_display_manager_file)"
+            display_manager="${default_path##*/}"
+            # We currently support only lightdm
+            if [ "$display_manager" = "lightdm" ]; then
+                # Insert the display-*-script lines
+                add_hybrid_script
+            fi
+        fi
 
         if [ ! -f /etc/prime-discrete ]; then
             echo "on" > /etc/prime-discrete
