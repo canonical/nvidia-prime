@@ -1,8 +1,17 @@
-nvidia-prime (0.5.2) UNRELEASED; urgency=low
+nvidia-prime (0.5.2) trusty; urgency=low
 
-  * 
+  * debian/control:
+    - Add an alternative dependency on gdm and kdm
+      so that gdm or kdm users are not forced to install
+      lightdm now that nvidia depends on nvidia-prime.
+      This fixes only the single graphics card use case
+      (hybrid graphics won't still work without lightdm)
+      but it's a step in the right direction (LP: #1262068).
+  * debian/preinst.in:
+    - Set the lightdm configuration bits only if lightdm
+      is the default display manager.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Fri, 20 Dec 2013 12:49:46 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 20 Dec 2013 15:43:58 +0100
 
 nvidia-prime (0.5.1) trusty; urgency=low
 
