@@ -26,6 +26,12 @@ PKG_lightdm_config_file_d := $(PKG_lightdm_config_dir_d)/$(PKG_lightdm_config_fi
 XORG_CONF := /etc/X11/xorg.conf
 XORG_TEMPLATE := $(PKG_lightdm_custom_config_dir)/xorg.template
 
+HOST_ARCH_MAIN ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+# If the host is i386 set OTHER_ARCH to x86_64 and vice versa
+HOST_ARCH_OTHER := $(shell (echo "$(HOST_ARCH_MAIN)" | grep i386 >/dev/null) && \
+		echo "$(HOST_ARCH_MAIN)" | sed s/i386/x86_64/ || \
+		echo "$(HOST_ARCH_MAIN)" | sed s/x86_64/i386/)
+
 %:
 	dh $@
 
@@ -46,6 +52,8 @@ regen-from-templates:
 			-e "s|#LIGHTDM_CONF_DIR_D#|$(PKG_lightdm_config_dir_d)|g" \
 			-e "s|#LIGHTDM_CONF_FILENAME_D#|$(PKG_lightdm_config_filename_d)|g" \
 			-e "s|#PRIME_DIR#|$(PKG_lightdm_config_filename_d)|g" \
+			-e "s|#HOST_ARCH_MAIN#|$(HOST_ARCH_MAIN)|g" \
+			-e "s|#HOST_ARCH_OTHER#|$(HOST_ARCH_OTHER)|g" \
 		$$i.in > $$i; \
 	done
 
