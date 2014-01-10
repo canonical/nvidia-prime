@@ -1,8 +1,11 @@
-nvidia-prime (0.5.3) UNRELEASED; urgency=low
+nvidia-prime (0.5.3) trusty; urgency=low
 
-  * 
+  * debian/postrm.in, debian/rules:
+    - Avoid calling dpkg-architecture (LP: #1264611).
+  * prime-xconfig:
+    - Properly format hexadecimal parameters (LP: #1252667).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Mon, 06 Jan 2014 18:45:15 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 10 Jan 2014 14:41:22 +0100
 
 nvidia-prime (0.5.2) trusty; urgency=low
 
