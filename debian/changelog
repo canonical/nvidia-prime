@@ -1,3 +1,9 @@
+nvidia-prime (0.5~hybrid0.0.2) UNRELEASED; urgency=low
+
+  * 
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 10 Jan 2014 15:23:02 +0100
+
 nvidia-prime (0.5~hybrid0.0.1) precise-proposed; urgency=low
 
   * New upstream release:
