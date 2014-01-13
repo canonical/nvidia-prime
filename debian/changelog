@@ -1,8 +1,16 @@
-nvidia-prime (0.5~hybrid0.0.2) UNRELEASED; urgency=low
+nvidia-prime (0.5~hybrid0.0.2) precise-proposed; urgency=low
 
-  * 
+  * debian/control:
+    - Add alternative dependency on gdm and kdm.
+  * debian/preinst.in:
+    - Set the lightdm configuration bits only if lightdm is the
+      default display manager (LP: #1262068).
+  * debian/postrm.in, debian/rules:
+    - Avoid calling dpkg-architecture (LP: #1264611).
+  * prime-xconfig:
+    - Format hexadecimal parameters properly (LP: #1252667).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Fri, 10 Jan 2014 15:23:02 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Mon, 13 Jan 2014 16:32:47 +0100
 
 nvidia-prime (0.5~hybrid0.0.1) precise-proposed; urgency=low
 
