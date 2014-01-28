@@ -17,54 +17,57 @@ lightdm_orig_conf=#LIGHTDM_CONF_FILE#
 default_display_manager_file=/etc/X11/default-display-manager
 
 add_hybrid_script () {
-    if [ -s "$lightdm_orig_conf" ]; then
-        # Get the file
-        lightdm_orig="$(cat $lightdm_orig_conf)"
+    if [ "`lsb_release -r -s`" = "12.04" ]; then
+        # Precise does not support separate config files
+        if [ -s "$lightdm_orig_conf" ]; then
+            # Get the file
+            lightdm_orig="$(cat $lightdm_orig_conf)"
 
-        # See if a display setup script is already
-        # in use
-        if echo "$lightdm_orig" | \
-             grep "display-setup-script"; then
-            echo "$lightdm_orig" | \
-            sed "s/.*display-setup-script.*/\
+            # See if a display setup script is already
+            # in use
+            if echo "$lightdm_orig" | \
+                 grep "display-setup-script"; then
+                echo "$lightdm_orig" | \
+                sed "s/.*display-setup-script.*/\
 display-setup-script\=\/sbin\/prime-offload/g" \
-            > "$lightdm_orig_conf"
-        else
-            # Add a line after the pattern
-            echo "$lightdm_orig" | \
-            sed '/.*user-session.*/ a\
+                > "$lightdm_orig_conf"
+            else
+                # Add a line after the pattern
+                echo "$lightdm_orig" | \
+                sed '/.*user-session.*/ a\
 display-setup-script\=\/sbin\/prime-offload' \
-            > "$lightdm_orig_conf"
-        fi
+                > "$lightdm_orig_conf"
+            fi
 
-        # Read the file again
-        lightdm_orig="$(cat $lightdm_orig_conf)"
+            # Read the file again
+            lightdm_orig="$(cat $lightdm_orig_conf)"
 
-        # See if a display stopped script is already
-        # in use
-        if echo "$lightdm_orig" | \
-             grep "display-stopped-script"; then
-            echo "$lightdm_orig" | \
-            sed "s/.*display-stopped-script.*/\
+            # See if a display stopped script is already
+            # in use
+            if echo "$lightdm_orig" | \
+                 grep "display-stopped-script"; then
+                echo "$lightdm_orig" | \
+                sed "s/.*display-stopped-script.*/\
 display-stopped-script\=\/sbin\/prime-switch/g" \
-            > "$lightdm_orig_conf"
-        else
-            # Add a line after the pattern
-            echo "$lightdm_orig" | \
-            sed '/.*display-setup-script.*/ a\
+                > "$lightdm_orig_conf"
+            else
+                # Add a line after the pattern
+                echo "$lightdm_orig" | \
+                sed '/.*display-setup-script.*/ a\
 display-stopped-script\=\/sbin\/prime-switch' \
-            > "$lightdm_orig_conf"
+                > "$lightdm_orig_conf"
+            fi
         fi
     else
-        # Let's create a configuration file
-        # from scratch
-        cat > $lightdm_orig_conf <<EOF
-[SeatDefaults]
-greeter-session=unity-greeter
-user-session=ubuntu
-display-setup-script=/sbin/prime-offload
-display-stopped-script=/sbin/prime-switch
-EOF
+        # Remove any configuration files that
+        # nvidia-prime might have changed in previous
+        # releases
+        if [ -s "$lightdm_orig_conf" ]; then
+            grep -e "display-setup-script=/sbin/prime-offload"  \
+                 -e "display-stopped-script=/sbin/prime-switch" \
+                 -q $lightdm_orig_conf && rm -f $lightdm_orig_conf \
+                 || true
+        fi
     fi
 }
 
