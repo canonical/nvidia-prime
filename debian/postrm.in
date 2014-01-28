@@ -20,11 +20,12 @@ set -e
 
 xorg_conf="#XORG_CONF#"
 now=$(date +"%m%d%Y")
-lightdm_orig_conf=#LIGHTDM_CONF_FILE#
+lightdm_orig_conf=#LIGHTDM_LEGACY_CONF_FILE#
 host_arch_main=#HOST_ARCH_MAIN#
 host_arch_other=#HOST_ARCH_OTHER#
 
 remove_hybrid_script () {
+    # Precise only!
     if [ -s "$lightdm_orig_conf" ]; then
         # Get the file
         lightdm_orig="$(cat $lightdm_orig_conf)"
@@ -65,15 +66,17 @@ case "$1" in
         fi
 
         if [ ! "$1" = "upgrade" ]; then
-            # Remove the display-setup-script line
-            remove_hybrid_script
+            if [ "$os_release" = "precise" ]; then
+                # Remove the display-setup-script line
+                remove_hybrid_script
+            fi
 
             # Remove the settings
             rm -f /etc/prime-discrete
 
             # Restore the alternatives to a non prime
             # configuration, if possible
-            os_release="$(lsb_release -c | cut -d: -f2 | sed "s/\t//g")"
+            os_release="$(lsb_release -cs)"
             main_arch=""$host_arch_main"_gl_conf"
             other_arch=""$host_arch_other"_gl_conf"
             main_alternative="$(get_current_alternative "$main_arch")"

@@ -13,7 +13,7 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
-lightdm_orig_conf=#LIGHTDM_CONF_FILE#
+lightdm_orig_conf=#LIGHTDM_LEGACY_CONF_FILE#
 default_display_manager_file=/etc/X11/default-display-manager
 
 add_hybrid_script () {

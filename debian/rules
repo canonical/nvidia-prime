@@ -10,21 +10,21 @@
 #export DH_VERBOSE=1
 
 PKG_name = $(shell dh_listpackages)
-TMP     = $(CURDIR)/debian/tmp
-PKG_lightdm_config_dir := /etc/lightdm
-PKG_lightdm_config_file := $(PKG_lightdm_config_dir)/lightdm.conf
-LIGHTDM_CONF_DIR := $(TMP)$(PKG_lightdm_config_dir)
-PKG_lightdm_custom_config_dir := /usr/share/$(PKG_name)
-PKG_lightdm_custom_config_file := $(PKG_lightdm_custom_config_dir)/lightdm.conf
-LIGHTDM_CUSTOM_CONF_DIR := $(TMP)$(PKG_lightdm_custom_config_dir)
-# This doesn't work in Precise but it's harmless
-# We need it to disable XMir
-PKG_lightdm_config_filename_d := 90-nvidia.conf
-PKG_lightdm_config_dir_d := $(PKG_lightdm_config_dir)/lightdm.conf.d
-PKG_lightdm_config_file_d := $(PKG_lightdm_config_dir_d)/$(PKG_lightdm_config_filename_d)
+
+# Legacy configuration file for Lightdm
+# useful only in Precise
+PKG_lightdm_legacy_config_dir := /etc/lightdm
+PKG_lightdm_legacy_config_file := $(PKG_lightdm_legacy_config_dir)/lightdm.conf
+
+misc_dir := /usr/share/$(PKG_name)
+
+# New snippets for Lightdm in Ubuntu >= 13.04
+PKG_lightdm_config_filename := 90-nvidia.conf
+PKG_lightdm_config_dir := /usr/share/lightdm.conf.d
+PKG_lightdm_config_file := $(PKG_lightdm_config_dir)/$(PKG_lightdm_config_filename)
 
 XORG_CONF := /etc/X11/xorg.conf
-XORG_TEMPLATE := $(PKG_lightdm_custom_config_dir)/xorg.template
+XORG_TEMPLATE := $(misc_dir)/xorg.template
 
 HOST_ARCH_MAIN ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 # If the host is i386 set OTHER_ARCH to x86_64 and vice versa
@@ -44,14 +44,12 @@ regen-from-templates:
 		sed -e 's|#XORG_CONF#|$(XORG_CONF)|g' \
 			-e 's|#XORG_TEMPLATE#|$(XORG_TEMPLATE)|g' \
 			-e 's|#PKGNAME#|$(PKG_name)|g' \
+			-e "s|#LIGHTDM_LEGACY_CONF_FILE#|$(PKG_lightdm_legacy_config_file)|g" \
+			-e "s|#LIGHTDM_LEGACY_CONF_DIR#|$(PKG_lightdm_legacy_config_dir)|g" \
+			-e "s|#MISC_DIR#|$(misc_dir)|g" \
 			-e "s|#LIGHTDM_CONF_FILE#|$(PKG_lightdm_config_file)|g" \
 			-e "s|#LIGHTDM_CONF_DIR#|$(PKG_lightdm_config_dir)|g" \
-			-e "s|#LIGHTDM_CUSTOM_CONF_FILE#|$(PKG_lightdm_custom_config_file)|g" \
-			-e "s|#LIGHTDM_CUSTOM_CONF_DIR#|$(PKG_lightdm_custom_config_dir)|g" \
-			-e "s|#LIGHTDM_CONF_FILE_D#|$(PKG_lightdm_config_file_d)|g" \
-			-e "s|#LIGHTDM_CONF_DIR_D#|$(PKG_lightdm_config_dir_d)|g" \
-			-e "s|#LIGHTDM_CONF_FILENAME_D#|$(PKG_lightdm_config_filename_d)|g" \
-			-e "s|#PRIME_DIR#|$(PKG_lightdm_config_filename_d)|g" \
+			-e "s|#LIGHTDM_CONF_FILENAME#|$(PKG_lightdm_config_filename)|g" \
 			-e "s|#HOST_ARCH_MAIN#|$(HOST_ARCH_MAIN)|g" \
 			-e "s|#HOST_ARCH_OTHER#|$(HOST_ARCH_OTHER)|g" \
 		$$i.in > $$i; \
