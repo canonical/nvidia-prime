@@ -1,8 +1,15 @@
-nvidia-prime (0.5.4) UNRELEASED; urgency=low
+nvidia-prime (0.5.4) trusty; urgency=low
 
-  * 
+  * Do not touch lightdm.conf any more on anything newer than Precise.
+    90-nvidia.conf now contains only the relevant settings for PRIME
+    (LP: #1267442).
+  * Also remove any previous lightdm.conf that nvidia-prime might
+    have messed up.
+  * Major packaging clean-up. The variable in debian/rules and in
+    templates have clearer names now.
+  * Clean up the old 90-nvidia.conf that we used to ship in /etc.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Tue, 28 Jan 2014 12:05:37 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Tue, 28 Jan 2014 17:30:43 +0100
 
 nvidia-prime (0.5.3) trusty; urgency=low
 
