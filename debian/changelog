@@ -1,8 +1,9 @@
-nvidia-prime (0.5.5) UNRELEASED; urgency=low
+nvidia-prime (0.5.5) trusty; urgency=low
 
-  * 
+  * debian/rules:
+    - Fix path to lightdm configuration files.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Wed, 29 Jan 2014 13:21:35 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 31 Jan 2014 16:12:44 +0100
 
 nvidia-prime (0.5.4) trusty; urgency=low
 
