@@ -20,7 +20,7 @@ misc_dir := /usr/share/$(PKG_name)
 
 # New snippets for Lightdm in Ubuntu >= 13.04
 PKG_lightdm_config_filename := 90-nvidia.conf
-PKG_lightdm_config_dir := /usr/share/lightdm.conf.d
+PKG_lightdm_config_dir := /etc/lightdm/lightdm.conf.d
 PKG_lightdm_config_file := $(PKG_lightdm_config_dir)/$(PKG_lightdm_config_filename)
 
 XORG_CONF := /etc/X11/xorg.conf
