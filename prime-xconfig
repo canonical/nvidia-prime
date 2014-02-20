@@ -23,7 +23,7 @@ nv_get_id() {
     nvidia_id=""
     pattern="10de"
     for devclass in "300" "301" "302" "380"; do
-        nvidia_id="$(lspci -n | grep $devclass | grep $pattern | cut -d" " -f1 | sed s/\\./:/g)"
+        nvidia_id="$(lspci -Dn | grep $devclass | grep $pattern | cut -d" " -f1 | sed s/\\./:/g)"
         if [ -n "$nvidia_id" ]; then
             # We have found the device
             break
@@ -33,12 +33,17 @@ nv_get_id() {
     id_0="$(echo $nvidia_id | cut -d: -f1)"
     id_1="$(echo $nvidia_id | cut -d: -f2)"
     id_2="$(echo $nvidia_id | cut -d: -f3)"
+    id_3="$(echo $nvidia_id | cut -d: -f4)"
 
     id_0="${id_0:-0}"
     id_1="${id_1:-0}"
     id_2="${id_2:-0}"
+    id_3="${id_3:-0}"
 
-    printf "%x:%x:%x\n" "0x${id_0}" "0x${id_1}" "0x${id_2}"
+    # lspci -Dn reports: domain:bus:slot.function, with all values in hex
+    # xf86ParsePciBusString expects: bus@domain:slot:function, in decimal
+
+    printf "PCI:%d@%d:%d:%d\n" "0x${id_1}" "0x${id_0}" "0x${id_2}" "0x${id_3}"
 }
 
 # The first nvidia series which works when no displays are
