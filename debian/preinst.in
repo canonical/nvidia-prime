@@ -83,10 +83,6 @@ case "$1" in
             fi
         fi
 
-        # Clean up the old configuration file
-        # that we used to ship in /etc
-        rm -f /etc/lightdm/lightdm.conf.d/90-nvidia.conf
-
         if [ ! -f /etc/prime-discrete ]; then
             echo "on" > /etc/prime-discrete
         fi
