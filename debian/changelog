@@ -1,8 +1,28 @@
-nvidia-prime (0.5~hybrid0.0.3) UNRELEASED; urgency=low
+nvidia-prime (0.5~hybrid0.0.3) precise-proposed; urgency=low
 
-  * 
+  [ Daniel Dadap ]
+  * prime-xconfig:
+    - Format the BusID string correctly (LP: #1282796).
+      The BusID string created by prime-xconfig had several problems:
+      1) It was missing the bus type "PCI", as recommended by
+         xorg.conf(5).
+      2) Values were written in hexadecimal, as reported by lspci,
+         instead of decimal, as expected by the server. (See the
+         comment at the top of xf86ParsePciBusString().)
+      3) The PCI domain was not specified.
+      Giving the BusID string in the wrong format could cause the X
+      server to fail to parse the BusID, or to parse numbers in the
+      wrong base. On systems with more than one PCI domain, `lspci -n`
+      output would include the domain number, which is omitted by
+      default on systems with only one PCI domain. nv_get_id()
+      expects the bus number to be the first field, which would not be
+      correct when `lspci -n` reports the domain, as it does on
+      systems with multiple domains.
+      Fix these issues by always reporting the domain with `lspci -Dn`
+      and using it in the BusID string, prepending "PCI:" to the
+      BusID string, and printing all numeric values in decimal.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Fri, 21 Feb 2014 09:58:22 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 21 Feb 2014 09:59:12 +0100
 
 nvidia-prime (0.5~hybrid0.0.2) precise-proposed; urgency=low
 
