@@ -1,10 +1,7 @@
 #LIGHTDM_CONF_FILENAME# #LIGHTDM_CONF_DIR#
-xorg.template #MISC_DIR#
-xorg_legacy.template #MISC_DIR#
 prime-quirks #MISC_DIR#
 prime-offload /sbin
 prime-switch /sbin
-prime-xconfig /sbin
 get-quirk-options /sbin
 prime-select /usr/bin
 prime-supported /usr/bin
