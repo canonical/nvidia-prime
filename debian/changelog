@@ -1,8 +1,13 @@
-nvidia-prime (0.6) UNRELEASED; urgency=low
+nvidia-prime (0.6) trusty; urgency=low
 
-  * 
+  * debian/control:
+    - Breaks: ubuntu-drivers-common (<< 1:0.2.89).
+  * Add support for the new ubuntu-drivers-common. The gpu-manager
+    will take care of most of the work. We only need to tell
+    lightdm that we want to offload rendering, and to run the
+    gpu-manager on log out.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Tue, 04 Mar 2014 16:27:22 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 06 Mar 2014 09:19:12 +0100
 
 nvidia-prime (0.5.7) trusty; urgency=low
 
