@@ -14,6 +14,7 @@ Depends: lightdm (>= 1.9.1) | gdm | kdm, upstart, bbswitch-dkms,
 Conflicts: hybrid-graphics
 Replaces: hybrid-graphics
 Provides: hybrid-graphics
+Breaks: ubuntu-drivers-common (<< 1:0.2.89)
 Description: Tools to enable NVIDIA's Prime
  This is a set of tools which will enable
  NVIDIA's Prime on MUXless systems.
