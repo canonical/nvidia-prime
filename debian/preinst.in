@@ -83,6 +83,12 @@ case "$1" in
             fi
         fi
 
+        # Remove the lightdm config file from /etc
+        if dpkg-maintscript-helper supports rm_conffile; then
+            dpkg-maintscript-helper rm_conffile \
+            /etc/lightdm/lightdm.conf.d/90-nvidia.conf 0.6.1~ -- "$@"
+        fi
+
         if [ ! -f /etc/prime-discrete ]; then
             echo "on" > /etc/prime-discrete
         fi
