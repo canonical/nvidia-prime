@@ -18,7 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 LOG=/var/log/prime-supported.log
-force_prime=/etc/force-prime
 
 if [ -n "$1" ]; then
     LOG="$1"
@@ -32,57 +31,11 @@ if [ -f $LOG ]; then
     rm -f $LOG
 fi
 
-# We only support laptops by default,
-# you can override this check by creating
-# the /etc/force-prime file
-if [ -f "$force_prime" ]; then
-    echo "Force mode enabled. Skipping laptop check" >> $LOG 2>&1
+if [ -e "/var/lib/ubuntu-drivers-common/requires_offloading" ]; then
+    echo "Requires offloading" >> $LOG 2>&1
+    echo "yes"
 else
-    if [ -n "`ls -A /sys/class/power_supply/`" ] && \
-       [ -d "/proc/acpi/button/lid" ]; then
-        echo "Laptop detected" >> $LOG 2>&1
-    else
-        echo "Sorry but we only support laptops" >> $LOG 2>&1
-        exit 0
-    fi
-fi
-
-# We only support intel + nvidia
-cards="$(lspci -n)"
-# the different classes as per pci.ids
-# Syntax:
-# C class   class_name
-#   subclass    subclass_name       <-- single tab
-#       prog-if  prog-if_name   <-- two tabs
-#C 03  Display controller
-#    00  VGA compatible controller
-#        00  VGA controller
-#        01  8514 controller
-#    01  XGA compatible controller
-#    02  3D controller
-#    80  Display controller
-gfx_300="$(echo "$cards" | grep 300)"
-gfx_301="$(echo "$cards" | grep 301)"
-gfx_302="$(echo "$cards" | grep 302)"
-
-has_nvidia=false
-has_intel=false
-
-for gfx_class in "$gfx_300" "$gfx_301" "$gfx_302"; do
-    if echo "$gfx_class" | egrep -q "8086"; then
-      # Intel detected
-      has_intel=true
-    fi
-    if echo "$gfx_class" | egrep -q "10de"; then
-      # Nvidia detected
-      has_nvidia=true
-    fi
-done
-
-if ! $has_intel || ! $has_nvidia; then
-    echo "Sorry we only support Intel+Nvidia" \
-         >> $LOG 2>&1
+    echo "No offloading required. Abort" >> $LOG 2>&1
     exit 0
 fi
 
-echo "yes"
