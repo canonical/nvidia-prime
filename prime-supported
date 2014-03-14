@@ -64,12 +64,11 @@ cards="$(lspci -n)"
 gfx_300="$(echo "$cards" | grep 300)"
 gfx_301="$(echo "$cards" | grep 301)"
 gfx_302="$(echo "$cards" | grep 302)"
-gfx_380="$(echo "$cards" | grep 380)"
 
 has_nvidia=false
 has_intel=false
 
-for gfx_class in "$gfx_300" "$gfx_301" "$gfx_302" "$gfx_380"; do
+for gfx_class in "$gfx_300" "$gfx_301" "$gfx_302"; do
     if echo "$gfx_class" | egrep -q "8086"; then
       # Intel detected
       has_intel=true
