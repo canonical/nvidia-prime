@@ -1,8 +1,12 @@
-nvidia-prime (0.6.2) UNRELEASED; urgency=medium
+nvidia-prime (0.6.2) trusty; urgency=medium
 
-  * 
+  * prime-supported:
+    - Check /var/lib/ubuntu-drivers-common/requires_offloading to
+      know if we need to offload rendering. There's no need to do
+      hardware detection again when the gpu-manager already does
+      all the work.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Fri, 14 Mar 2014 16:15:37 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Mon, 31 Mar 2014 17:13:37 +0200
 
 nvidia-prime (0.6.1) trusty; urgency=medium
 
