@@ -1,3 +1,9 @@
+nvidia-prime (0.5~hybrid0.0.4) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Tue, 22 Apr 2014 16:24:40 +0200
+
 nvidia-prime (0.5~hybrid0.0.3) precise-proposed; urgency=low
 
   [ Daniel Dadap ]
