@@ -1,8 +1,10 @@
-nvidia-prime (0.6.4) UNRELEASED; urgency=medium
+nvidia-prime (0.6.4) utopic; urgency=medium
 
-  * 
+  * prime-quirks:
+    - Remove quirk for "Vostro 20 3015". We were really getting
+      a false positive in the gpu-manager (LP: #1310516).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Fri, 16 May 2014 13:16:04 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 16 May 2014 13:16:57 +0200
 
 nvidia-prime (0.6.3) utopic; urgency=medium
 
