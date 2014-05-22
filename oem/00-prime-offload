@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+# Call prime-offload on the OEM installer so that offloading
+# can temporarily work without Lightdm
+#
+
+/sbin/prime-offload

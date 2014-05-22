@@ -1,4 +1,5 @@
 /etc/X11
+/usr/lib/ubiquity/dm-scripts
 #MISC_DIR#
 #LIGHTDM_LEGACY_CONF_DIR#
 #LIGHTDM_CONF_DIR#
