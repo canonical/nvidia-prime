@@ -1,8 +1,10 @@
-nvidia-prime (0.6.5) UNRELEASED; urgency=medium
+nvidia-prime (0.6.5) utopic; urgency=medium
 
-  * 
+  * debian/dirs.in, debian/install.in, oem/00-prime-offload:
+    - Add support for offloading rendering to NVIDIA when using
+      the OEM installer.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Thu, 22 May 2014 15:01:32 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 22 May 2014 15:54:58 +0200
 
 nvidia-prime (0.6.4) utopic; urgency=medium
 
