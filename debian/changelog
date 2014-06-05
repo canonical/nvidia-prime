@@ -1,8 +1,12 @@
-nvidia-prime (0.5~hybrid0.0.4) UNRELEASED; urgency=medium
+nvidia-prime (0.5~hybrid0.0.4) precise-proposed; urgency=medium
 
-  * 
+  * xorg.template, xorg_legacy.template:
+    - Switch the driver from modesetting to intel with SNA
+      (LP: #1326257).
+    - Enable external outputs and remove ghost CRT outputs
+      (LP: #1296020).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Tue, 22 Apr 2014 16:24:40 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 05 Jun 2014 11:00:09 +0200
 
 nvidia-prime (0.5~hybrid0.0.3) precise-proposed; urgency=low
 
