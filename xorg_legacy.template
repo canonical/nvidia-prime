@@ -24,4 +24,5 @@ EndSection
 Section "Device"
     Identifier "intel"
     Driver "intel"
+    Option "AccelMethod" "SNA"
 EndSection
