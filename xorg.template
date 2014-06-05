@@ -10,16 +10,19 @@ Section "Device"
     Identifier "nvidia"
     Driver "nvidia"
     BusID "#BUSID#"
+    Option "ConstrainCursor" "off"
+EndSection
+
+Section "Screen"
+    Identifier "intel"
+    Device "intel"
 EndSection
 
 Section "Screen"
     Identifier "nvidia"
     Device "nvidia"
-    # The internal display might not be connected
-    # to the nvidia card but we definitely want
-    # to be able to connect external displays later
-    #Option "AllowEmptyInitialConfiguration" "on"
-    Option "UseDisplayDevice" "none"
+    Option "AllowEmptyInitialConfiguration" "on"
+    Option "IgnoreDisplayDevices" "CRT"
 EndSection
 
 Section "Device"
