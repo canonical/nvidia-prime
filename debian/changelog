@@ -1,8 +1,14 @@
-nvidia-prime (0.6.6) UNRELEASED; urgency=medium
+nvidia-prime (0.6.6) utopic; urgency=medium
 
-  * 
+  * prime-select:
+    - Simplify the logic for enablement. The simplified logic
+      should also be more robust and try harder instead of
+      complaining and aborting early (LP: #1310023).
+      This is now possible thanks to the fact that we allow
+      installing only one binary driver at the time. This is
+      not the case in Ubuntu <= 12.04.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Thu, 19 Jun 2014 11:52:59 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 19 Jun 2014 15:48:06 +0200
 
 nvidia-prime (0.6.5) utopic; urgency=medium
 
