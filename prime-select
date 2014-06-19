@@ -251,11 +251,36 @@ class Switcher(object):
         settings.write('%s\n' % nvidia_power)
         settings.close()
 
+    def _supports_prime(self):
+        '''See if there are alternatives that support PRIME'''
+        alternatives = self._get_gl_alternatives_list()
+        for alternative in alternatives:
+            if 'prime' in alternative:
+                return True
+        return False
+
+    def _find_alternative_by_name(self, name, ignore_pattern=''):
+        '''Find the alternative name that matches a generic name pattern'''
+        alternatives = self._get_gl_alternatives_list()
+
+        for alternative in alternatives:
+            if name in alternative:
+                if ignore_pattern and ignore_pattern in alternative:
+                    continue
+                return alternative
+        return None
 
     def enable_profile(self, profile):
         current_driver = ''
         current_profile = ''
         alternatives = self._get_current_alternative()
+
+        sys.stdout.write('Info: the current alternatives in use are: %s\n' % str(alternatives))
+
+        # Make sure that the installed packages support PRIME
+        if not self._supports_prime():
+            sys.stderr.write('Error: the installed packages do not support PRIME\n')
+            return False
 
         try:
             alternative = str(alternatives[0])
@@ -265,60 +290,23 @@ class Switcher(object):
             sys.stderr.write('Error: the required alternatives do not exist\n')
             return False
 
-        # The alternatives we are looking for are both provided by
-        # an nvidia package
-        if (alternative == alternative_other and
-            'nvidia' in alternative):
-            # The driver in use
-            current_driver = alternative
-            # The profile in use
-            if 'prime' in alternative:
-                current_profile = 'intel'
-            else:
-                current_profile = 'nvidia'
-                # Check that the alternative for the intel profile
-                # exists. If it doesn't, then the driver does not
-                # support power management with PRIME
-                alt_driver = '%s-prime' % current_driver
-                if (not self._gl_switcher.get_alternative_by_name(alt_driver) or
-                    not self._gl_switcher_other.get_alternative_by_name(alt_driver)):
-                    sys.stderr.write('Error: %s does not support PRIME power management\n')
-                    return False
-
-            # Are alternatives in "auto" or in "manual" mode?
-            status = self._get_current_alternative_status()
-
-            # No need to do anything if we're already using the desired
-            # profile, provided that alternatives are not in "auto" mode
-            if profile == current_profile and 'auto' not in status:
+        if alternative == alternative_other:
+            if ((profile == 'intel' and 'prime' in alternative) or
+                (profile == 'nvidia' and 'prime' not in alternative and
+                 'nvidia' in alternative)):
+                # No need to do anything if we're already using the desired
+                # profile
                 sys.stdout.write('Info: the %s profile is already in use\n' % (profile))
                 return True
-        elif (alternative != alternative_other and
-            'nvidia' in alternative):
-            # Something's wrong here
-            # e.g. nvidia-319 on x86_64 and mesa on i386
-            sys.stdout.write('Info: the alternatives do not match\n')
-            # The first alternative shows the driver in use
-            current_driver = alternative
-
-            if 'prime' not in alternative:
-                # Check that the alternative for the intel profile
-                # exists. If it doesn't, then the driver does not
-                # support power management with PRIME
-                alt_driver = '%s-prime' % current_driver
-                if (not self._gl_switcher.get_alternative_by_name(alt_driver) or
-                    not self._gl_switcher_other.get_alternative_by_name(alt_driver)):
-                    sys.stderr.write('Error: %s does not support PRIME power management\n')
-                    return False
-        else:
-            sys.stderr.write('Error: alternatives are not set up properly\n')
-            return False
 
         # Enable the desired alternative
         if profile == 'intel':
-            target_driver = '%s-prime' % current_driver
+            target_driver = self._find_alternative_by_name('prime')
         else:
-            target_driver = current_driver.replace('-prime', '')
+            # Make sure to get nvidia-$flavour instead of nvidia-$flavour-prime
+            target_driver = self._find_alternative_by_name('nvidia', ignore_pattern='prime')
+
+        sys.stdout.write('Info: selecting %s for the %s profile\n' % (target_driver, profile))
 
         if self.enable_alternative(target_driver):
             # Write the settings to the config file
