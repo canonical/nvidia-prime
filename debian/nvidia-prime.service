@@ -1,0 +1,11 @@
+[Unit]
+Description=Enable NVIDIA GPU for PRIME on Shutdown
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=-/bin/sh -c 'echo ON > /proc/acpi/bbswitch'
+
+[Install]
+WantedBy=shutdown.target
+

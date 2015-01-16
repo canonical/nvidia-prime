@@ -3,3 +3,4 @@
 #MISC_DIR#
 #LIGHTDM_LEGACY_CONF_DIR#
 #LIGHTDM_CONF_DIR#
+/lib/systemd/system

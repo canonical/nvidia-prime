@@ -55,6 +55,15 @@ regen-from-templates:
 		$$i.in > $$i; \
 	done
 
+override_dh_install:
+	dh_install --fail-missing -Xlib/systemd
+
+	# on architectures where we build gpu-manager, install the systemd unit
+	if [ -d debian/tmp/lib/systemd ]; then \
+		dh_systemd_enable; \
+		dh_install -p nvidia-prime lib/systemd; \
+	fi
+
 override_dh_auto_clean:
 	for i in $(CURDIR)/debian/install \
 	     $(CURDIR)/debian/dirs \
