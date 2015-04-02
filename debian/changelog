@@ -1,3 +1,10 @@
+nvidia-prime (0.8) vivid; urgency=medium
+
+  * Drop upstart dependency, previous version added systemd support.
+    (LP: #1428849)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 09 Mar 2015 08:43:49 +0100
+
 nvidia-prime (0.7) vivid; urgency=medium
 
   * debian/control, debian/dirs.in, debian/install.in,
