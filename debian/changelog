@@ -1,8 +1,9 @@
-nvidia-prime (0.8.1) UNRELEASED; urgency=medium
+nvidia-prime (0.8.1) vivid; urgency=medium
 
-  * 
+  * debian/control:
+    - Add alternative dependency on sddm.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Thu, 02 Apr 2015 17:41:03 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 02 Apr 2015 17:43:15 +0200
 
 nvidia-prime (0.8) vivid; urgency=medium
 
