@@ -1,8 +1,9 @@
-nvidia-prime (0.8.2) UNRELEASED; urgency=medium
+nvidia-prime (0.8.2) xenial; urgency=medium
 
-  * 
+  * prime-select:
+    - Add support for EGL alternatives.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Fri, 22 Jan 2016 16:42:22 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 28 Jan 2016 17:33:03 +0100
 
 nvidia-prime (0.8.1) vivid; urgency=medium
 
