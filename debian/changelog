@@ -1,3 +1,9 @@
+nvidia-prime (0.8.3) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 30 Jun 2016 18:15:47 +0200
+
 nvidia-prime (0.8.2) xenial; urgency=medium
 
   * prime-select:
