@@ -1,8 +1,10 @@
-nvidia-prime (0.8.3) UNRELEASED; urgency=medium
+nvidia-prime (0.8.3) yakkety; urgency=medium
 
-  * 
+  * debian/control:
+    - Use gdm3 instead of gdm (LP: #1582439).
+      Thanks to Jeremy Bicha for the patch.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Thu, 30 Jun 2016 18:15:47 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 30 Jun 2016 18:16:15 +0200
 
 nvidia-prime (0.8.2) xenial; urgency=medium
 
