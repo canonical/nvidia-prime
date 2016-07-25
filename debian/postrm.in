@@ -18,7 +18,6 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
-xorg_conf="#XORG_CONF#"
 now=$(date +"%m%d%Y")
 lightdm_orig_conf=#LIGHTDM_LEGACY_CONF_FILE#
 host_arch_main=#HOST_ARCH_MAIN#
@@ -60,11 +59,6 @@ set_alternative() {
 
 case "$1" in
     purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
-        # Remove the xorg.conf
-        if [ -f $xorg_conf ]; then
-            mv $xorg_conf $xorg_conf.$now
-        fi
-
         if [ ! "$1" = "upgrade" ]; then
             if [ "$os_release" = "precise" ]; then
                 # Remove the display-setup-script line
