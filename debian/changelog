@@ -1,8 +1,9 @@
-nvidia-prime (0.8.4) UNRELEASED; urgency=medium
+nvidia-prime (0.8.4) yakkety; urgency=medium
 
-  * 
+  * debian/postrm.in:
+    - Do not try to remove the old xorg.conf (LP: #1345585).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Mon, 25 Jul 2016 17:50:06 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Mon, 25 Jul 2016 17:54:00 +0200
 
 nvidia-prime (0.8.3) yakkety; urgency=medium
 
