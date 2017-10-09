@@ -33,7 +33,7 @@ HOST_ARCH_OTHER := $(shell (echo "$(HOST_ARCH_MAIN)" | grep i386 >/dev/null) && 
 		echo "$(HOST_ARCH_MAIN)" | sed s/x86_64/i386/)
 
 %:
-	dh $@
+	dh $@ --with python3
 
 .PHONY: regen-from-templates
 regen-from-templates:

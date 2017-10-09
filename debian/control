@@ -2,7 +2,7 @@ Source: nvidia-prime
 Section: admin
 Priority: optional
 Maintainer: Alberto Milone <alberto.milone@canonical.com>
-Build-Depends: debhelper (>= 8.0.0), dh-systemd
+Build-Depends: debhelper (>= 9.0.0), dh-systemd, dh-python, python3-all
 Standards-Version: 3.9.2
 Vcs-Git: git://github.com/tseliot/nvidia-prime.git
 Vcs-Browser: http://github.com/tseliot/nvidia-prime
@@ -10,7 +10,7 @@ Vcs-Browser: http://github.com/tseliot/nvidia-prime
 Package: nvidia-prime
 Architecture: i386 amd64
 Depends: lightdm (>= 1.9.1) | gdm3 | kdm | sddm, bbswitch-dkms,
- pciutils, lsb-release, ${shlibs:Depends}, ${misc:Depends}
+ pciutils, lsb-release, ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}
 Conflicts: hybrid-graphics
 Replaces: hybrid-graphics
 Provides: hybrid-graphics
