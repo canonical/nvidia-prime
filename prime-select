@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 #       prime-select
 #
@@ -62,7 +62,7 @@ class Alternatives:
                    stdout=PIPE, stderr=dev_null)
         p = p1.communicate()[0]
         dev_null.close()
-        c = p.split('\n')
+        c = p.decode('utf-8').split('\n')
         for line in c:
             line.strip() and alternatives.append(line.strip())
 
@@ -80,7 +80,7 @@ class Alternatives:
                    stdout=PIPE, stderr=dev_null)
         p = p1.communicate()[0]
         dev_null.close()
-        c = p.split('\n')
+        c = p.decode('utf-8').split('\n')
         if check_status:
             pattern = 'Status:'
         else:
@@ -141,9 +141,8 @@ class Switcher(object):
         self._needs_multiarch = (main_arch == 'x86_64')
 
         if self._needs_multiarch:
-            other_arch = self._supported_architectures.values()[
-                          int(not self._supported_architectures
-                          .values().index(main_arch))]
+            other_arch = list(self._supported_architectures.values())[
+                          int(not list(self._supported_architectures.values()).index(main_arch))]
             other_gl_alternative_name = self._get_gl_alternative_name_from_arch(other_arch)
             other_egl_alternative_name = self._get_egl_alternative_name_from_arch(other_arch)
             # GL alternative for the other architecture
@@ -167,7 +166,7 @@ class Switcher(object):
         p1 = Popen(['dpkg', '--print-architecture'], stdout=PIPE, stderr=dev_null)
         p = p1.communicate()[0]
         dev_null.close()
-        architecture = p.strip()
+        architecture = p.decode('utf-8').strip()
         return self._supported_architectures.get(architecture)
 
     def _get_gl_alternative_name_from_arch(self, architecture):
