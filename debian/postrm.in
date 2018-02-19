@@ -18,95 +18,11 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
-now=$(date +"%m%d%Y")
-lightdm_orig_conf=#LIGHTDM_LEGACY_CONF_FILE#
-host_arch_main=#HOST_ARCH_MAIN#
-host_arch_other=#HOST_ARCH_OTHER#
-
-remove_hybrid_script () {
-    # Precise only!
-    if [ -s "$lightdm_orig_conf" ]; then
-        # Get the file
-        lightdm_orig="$(cat $lightdm_orig_conf)"
-        echo "$lightdm_orig" | \
-        sed "/.*display-setup-script.*/d" \
-        > "$lightdm_orig_conf"
-
-        lightdm_orig="$(cat $lightdm_orig_conf)"
-        echo "$lightdm_orig" | \
-        sed "/.*display-stopped-script.*/d" \
-        > "$lightdm_orig_conf"
-    fi
-}
-
-get_current_alternative() {
-    master_link="$1"
-    value=""
-    alternatives="$(update-alternatives --query "$master_link" 2>/dev/null || true)"
-    if [ -n "$alternatives" ]; then
-        #status=$(echo "$alternatives" | grep "Status:" | sed "s/Status: //g")
-        value="$(echo "$alternatives" | grep "Value:" | sed "s/Value: //g")"
-    fi
-    echo "$value"
-}
-
-set_alternative() {
-    master_link="$1"
-    path="$2"
-    update-alternatives --set "$master_link" "$path" || true
-}
-
-
 case "$1" in
     purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
         if [ ! "$1" = "upgrade" ]; then
-            if [ "$os_release" = "precise" ]; then
-                # Remove the display-setup-script line
-                remove_hybrid_script
-            fi
-
             # Remove the settings
             rm -f /etc/prime-discrete
-
-            # Restore the alternatives to a non prime
-            # configuration, if possible
-            os_release="$(lsb_release -cs)"
-            main_arch=""$host_arch_main"_gl_conf"
-            other_arch=""$host_arch_other"_gl_conf"
-            main_alternative="$(get_current_alternative "$main_arch")"
-            other_alternative="$(get_current_alternative "$other_arch")"
-
-            if echo "$main_alternative" | grep "prime"; then
-                if [ "$os_release" = "precise" ]; then
-                    # In Precise multiple drivers can be installed at the
-                    # same time, so we simply switch back to the non-prime
-                    # alternative provided by the same driver package
-                    fallback="$(echo "$main_alternative" | sed "s/-prime//g")"
-                    set_alternative "$main_arch" "$fallback"
-                else
-                    # Drivers cannot be installed all at the
-                    # same time, therefore it is recommended
-                    # that we set the alternative back to
-                    # automatic mode.
-                    update-alternatives --auto "$main_arch" || true
-                fi
-            fi
-            if echo "$other_alternative" | grep "prime"; then
-                if [ "$os_release" = "precise" ]; then
-                    # In Precise multiple drivers can be installed at the
-                    # same time, so we simply switch back to the non-prime
-                    # alternative provided by the same driver package
-                    fallback="$(echo "$other_alternative" | sed "s/-prime//g")"
-                    set_alternative "$other_arch" "$fallback"
-                else
-                    # Drivers cannot be installed all at the
-                    # same time, therefore it is recommended
-                    # that we set the alternative back to
-                    # automatic mode.
-                    update-alternatives --auto "$other_arch" || true
-                fi
-            fi
-            LDCONFIG_NOTRIGGER=y ldconfig
         fi
     ;;
 
