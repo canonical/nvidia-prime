@@ -42,234 +42,30 @@ import re
 import subprocess
 from subprocess import Popen, PIPE, CalledProcessError
 
-class Alternatives:
-
-    def __init__(self, master_link):
-        self._open_drivers_alternative = 'mesa/ld.so.conf'
-        self._open_egl_drivers_alternative = 'mesa-egl/ld.so.conf'
-        self._command = '/usr/bin/update-alternatives'
-        self._master_link = master_link
-
-        # Make sure that the PATH environment variable is set
-        if not os.environ.get('PATH'):
-            os.environ['PATH'] = '/sbin:/usr/sbin:/bin:/usr/bin'
-
-    def list_alternatives(self):
-        '''Get the list of alternatives for the master link'''
-        dev_null = open('/dev/null', 'w')
-        alternatives = []
-        p1 = Popen([self._command, '--list', self._master_link],
-                   stdout=PIPE, stderr=dev_null)
-        p = p1.communicate()[0]
-        dev_null.close()
-        c = p.decode('utf-8').split('\n')
-        for line in c:
-            line.strip() and alternatives.append(line.strip())
-
-        return alternatives
-
-    def get_current_alternative(self, check_status=False):
-        '''Get the alternative in use
-
-        If check_status is True, then only the status will
-        be reported (i.e. either "manual" or "auto")
-        '''
-        dev_null = open('/dev/null', 'w')
-        current_alternative = None
-        p1 = Popen([self._command, '--query', self._master_link],
-                   stdout=PIPE, stderr=dev_null)
-        p = p1.communicate()[0]
-        dev_null.close()
-        c = p.decode('utf-8').split('\n')
-        if check_status:
-            pattern = 'Status:'
-        else:
-            pattern = 'Value:'
-        for line in c:
-            if line.strip().startswith(pattern):
-                return line.replace(pattern, '').strip()
-        return None
-
-    def get_alternative_by_name(self, name, ignore_pattern=None):
-        '''Get the alternative link by providing the driver name
-
-        ignore_pattern allows ignoring a substring in the name'''
-        if ignore_pattern:
-            name = name.replace(ignore_pattern, '')
-        alternatives = self.list_alternatives()
-
-        for alternative in alternatives:
-            if alternative.split('/')[-2] == name:
-                return alternative
-
-        return None
-
-    def get_open_drivers_alternative(self):
-        '''Get the alternative link for open drivers'''
-        return self.get_alternative_by_name(self._open_drivers_alternative)
-
-    def get_open_egl_drivers_alternative(self):
-        '''Get the alternative link for open EGL/GLES drivers'''
-        return self.get_alternative_by_name(self._open_egl_drivers_alternative)
-
-    def set_alternative(self, path):
-        '''Tries to set an alternative and returns the boolean exit status'''
-        try:
-            subprocess.check_call([self._command, '--set',
-                                   self._master_link, path])
-            self.ldconfig()
-        except CalledProcessError:
-            return False
-        return True
-
-    def ldconfig(self):
-        '''Call ldconfig'''
-        try:
-            subprocess.check_call(['/sbin/ldconfig'])
-        except CalledProcessError:
-            return False
-        return True
-
 
 class Switcher(object):
 
     def __init__(self):
         self._power_profile_path = '/etc/prime-discrete'
-        self._supported_architectures = {'i386': 'i386', 'amd64': 'x86_64'}
-        main_arch = self._get_architecture()
 
-        self._needs_multiarch = (main_arch == 'x86_64')
+    def _get_profile(self):
 
-        if self._needs_multiarch:
-            other_arch = list(self._supported_architectures.values())[
-                          int(not list(self._supported_architectures.values()).index(main_arch))]
-            other_gl_alternative_name = self._get_gl_alternative_name_from_arch(other_arch)
-            other_egl_alternative_name = self._get_egl_alternative_name_from_arch(other_arch)
-            # GL alternative for the other architecture
-            self._gl_switcher_other = Alternatives(other_gl_alternative_name)
-            # EGL alternative for the other architecture
-            self._egl_switcher_other = Alternatives(other_egl_alternative_name)
+        try:
+            settings = open(self._power_profile_path, 'r')
+        except:
+            return 'unknown'
+
+        if settings.read().strip() == 'on':
+            return 'nvidia'
         else:
-            self._gl_switcher_other = None
-            self._egl_switcher_other = None
+            return 'intel'
 
-        main_alternative_name = self._get_gl_alternative_name_from_arch(main_arch)
-        main_egl_alternative_name = self._get_egl_alternative_name_from_arch(main_arch)
-
-        # GL alternative for the main architecture
-        self._gl_switcher = Alternatives(main_alternative_name)
-        # EGL alternative for the main architecture
-        self._egl_switcher = Alternatives(main_egl_alternative_name)
-
-    def _get_architecture(self):
-        dev_null = open('/dev/null', 'w')
-        p1 = Popen(['dpkg', '--print-architecture'], stdout=PIPE, stderr=dev_null)
-        p = p1.communicate()[0]
-        dev_null.close()
-        architecture = p.decode('utf-8').strip()
-        return self._supported_architectures.get(architecture)
-
-    def _get_gl_alternative_name_from_arch(self, architecture):
-        alternative = '%s-linux-gnu_gl_conf' % architecture
-        return alternative
-
-    def _get_egl_alternative_name_from_arch(self, architecture):
-        alternative = '%s-linux-gnu_egl_conf' % architecture
-        return alternative
-
-    def _simplify_x_alternative_name(self, alternative):
-        return alternative.split('/')[-1]
-
-    def _simplify_gl_alternative_name(self, alternative):
-        return alternative.split('/')[-2]
-
-    def _get_gl_alternatives_list(self):
-        raw_alternatives = self._gl_switcher.list_alternatives()
-        return  [ self._simplify_gl_alternative_name(x) for x in raw_alternatives ]
-
-    def _get_egl_alternatives_list(self):
-        raw_alternatives = self._egl_switcher.list_alternatives()
-        return  [ self._simplify_gl_alternative_name(x) for x in raw_alternatives ]
-
-    def _update_initramfs(self):
-        subprocess.call(['update-initramfs', '-u'])
-        # This may not be necessary
-        subprocess.call(['update-initramfs', '-u', '-k', os.uname()[2]])
-
-    def _get_current_alternative(self, switcher, switcher_other):
-        # This is a list as the 2nd item belongs to another architecture
-        alternatives = [None, None]
-        raw_alternative = switcher.get_current_alternative()
-
-        if (raw_alternative != None):
-            alternatives[0] = self._simplify_gl_alternative_name(raw_alternative)
-
-        if self._needs_multiarch:
-            raw_alternative_other = switcher_other.get_current_alternative()
-            if (raw_alternative_other != None):
-                alternatives[1] = self._simplify_gl_alternative_name(raw_alternative_other)
-
-        return alternatives
-
-    def _get_current_gl_alternative(self):
-        return self._get_current_alternative(self._gl_switcher, self._gl_switcher_other)
-
-    def _get_current_egl_alternative(self):
-        return self._get_current_alternative(self._egl_switcher, self._egl_switcher_other)
-
-    def enable_alternative(self, alternative):
-        success = False
-        gl_success = False
-        egl_success = False
-
-        # Make sure that the alternatives exist
-        gl_alternative = self._gl_switcher.get_alternative_by_name(alternative)
-        egl_alternative = self._egl_switcher.get_alternative_by_name(alternative)
-
-        # See if the alternatives for the main arch are null
-        # Abort if they are both null
-        if gl_alternative:
-            gl_success = self._gl_switcher.set_alternative(gl_alternative)
-
-        if egl_alternative:
-            egl_success = self._egl_switcher.set_alternative(egl_alternative)
-
-        success = (gl_success or egl_success)
-
-        if not success:
-            sys.stderr.write("Error: no GL or EGL alternatives can be found for %s\n" % alternative)
-            return success
-
-        # Do not abort if they do not exist
-        if self._needs_multiarch:
-            gl_alternative_other = self._gl_switcher_other.get_alternative_by_name(alternative)
-            egl_alternative_other = self._egl_switcher_other.get_alternative_by_name(alternative)
-
-            if gl_alternative_other:
-                self._gl_switcher_other.set_alternative(gl_alternative_other)
-
-            if egl_alternative_other:
-                self._egl_switcher_other.set_alternative(egl_alternative_other)
-
-        return success
-
-    def print_current_alternative(self):
-
-        gl_alternatives = self._get_current_gl_alternative()
-
-        gl_alternative = str(gl_alternatives[0])
-
-        if not gl_alternative:
+    def print_profile(self):
+        profile = self._get_profile()
+        if profile == 'unknown':
             return False
 
-        if 'nvidia' in gl_alternative:
-            if 'prime' in gl_alternative:
-                sys.stdout.write('intel\n')
-            else:
-                sys.stdout.write('nvidia\n')
-        else:
-            sys.stdout.write('unknown\n')
-
+        print('%s' % profile)
         return True
 
     def _write_profile(self, profile):
@@ -286,82 +82,32 @@ class Switcher(object):
         settings.close()
 
     def _supports_prime(self):
-        '''See if there are alternatives that support PRIME'''
-        alternatives = self._get_gl_alternatives_list()
-        for alternative in alternatives:
-            if 'prime' in alternative:
-                return True
-        return False
-
-    def _find_alternative_by_name(self, name, func, ignore_pattern=''):
-        alternatives = func()
-
-        for alternative in alternatives:
-            if name in alternative:
-                if ignore_pattern and ignore_pattern in alternative:
-                    continue
-                return alternative
-        return None
-
-    def _find_gl_alternative_by_name(self, name, ignore_pattern=''):
-        '''Find the alternative name that matches a generic name pattern'''
-        return self._find_alternative_by_name(name,
-                                              self._get_gl_alternatives_list,
-                                              ignore_pattern=ignore_pattern)
-
-    def _find_egl_alternative_by_name(self, name, ignore_pattern=''):
-        '''Find the alternative name that matches a generic name pattern'''
-        return self._find_alternative_by_name(name,
-                                              self._get_egl_alternatives_list,
-                                              ignore_pattern=ignore_pattern)
+        #i915 nvidia_drm
+        # modinfo nvidia-drm
+        # /var/lib/ubuntu-drivers-common/requires_offloading
+        return (os.path.isfile('/var/lib/ubuntu-drivers-common/requires_offloading') or
+                os.path.isfile('/run/u-d-c-nvidia-was-loaded'))
 
     def enable_profile(self, profile):
-        current_driver = ''
-        current_profile = ''
-        gl_alternatives = self._get_current_gl_alternative()
-        egl_alternatives = self._get_current_egl_alternative()
-
-        sys.stdout.write('Info: the current GL alternatives in use are: %s\n' % str(gl_alternatives))
-        sys.stdout.write('Info: the current EGL alternatives in use are: %s\n' % str(egl_alternatives))
+        current_profile = self._get_profile()
 
         # Make sure that the installed packages support PRIME
         if not self._supports_prime():
             sys.stderr.write('Error: the installed packages do not support PRIME\n')
             return False
 
-        gl_alternative = str(gl_alternatives[0])
-        egl_alternative = str(egl_alternatives[0])
-        
-        if not (gl_alternative or egl_alternative):
-            # No alternative exists
-            sys.stderr.write('Error: the required alternatives do not exist\n')
-            return False
-
-        if ((profile == 'intel' and 'prime' in gl_alternative) or
-            (profile == 'nvidia' and 'prime' not in gl_alternative and
-             'nvidia' in gl_alternative)):
+        if profile == current_profile:
             # No need to do anything if we're already using the desired
             # profile
-            sys.stdout.write('Info: the %s profile is already in use\n' % (profile))
+            sys.stdout.write('Info: the %s profile is already set\n' % (profile))
             return True
 
-        # Enable the desired alternative
-        if profile == 'intel':
-            target_gl_driver = self._find_gl_alternative_by_name('prime')
-        else:
-            # Make sure to get nvidia-$flavour instead of nvidia-$flavour-prime
-            target_gl_driver = self._find_gl_alternative_by_name('nvidia', ignore_pattern='prime')
+        sys.stdout.write('Info: selecting the %s profile\n' % (profile))
 
-        sys.stdout.write('Info: selecting %s for the %s profile\n' % (target_gl_driver, profile))
+        # Write the settings to the config file
+        self._write_profile(profile)
 
-        # We only care about the gl_driver because the egl will have
-        # the same name
-        if self.enable_alternative(target_gl_driver):
-            # Write the settings to the config file
-            self._write_profile(profile)
-            return True
-        else:
-            return False
+        return True
 
 
 def check_root():
@@ -369,12 +115,8 @@ def check_root():
         sys.stderr.write("This operation requires root privileges\n")
         exit(1)
 
-def handle_alternatives_error(mode):
-    sys.stderr.write('Error: %s mode can\'t be enabled\n' % mode)
-    exit(1)
-
 def handle_query_error():
-    sys.stderr.write("Error: no alternative can be found\n")
+    sys.stderr.write("Error: no profile can be found\n")
     exit(1)
 
 def usage():
@@ -394,10 +136,9 @@ if __name__ == '__main__':
 
     if arg == 'intel' or arg == 'nvidia':
         check_root()
-        if not switcher.enable_profile(arg):
-            handle_alternatives_error(arg)
+        switcher.enable_profile(arg)
     elif arg == 'query':
-        if not switcher.print_current_alternative():
+        if not switcher.print_profile():
             handle_query_error()
     else:
         usage()
