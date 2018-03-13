@@ -57,12 +57,8 @@ regen-from-templates:
 
 override_dh_install:
 	dh_install --fail-missing -Xlib/systemd
-
-	# on architectures where we build gpu-manager, install the systemd unit
-	if [ -d debian/tmp/lib/systemd ]; then \
-		dh_systemd_enable; \
-		dh_install -p nvidia-prime lib/systemd; \
-	fi
+	# Do not install the systemd unit. The switcher will enable it on
+	# demand
 
 override_dh_auto_clean:
 	for i in $(CURDIR)/debian/install \
