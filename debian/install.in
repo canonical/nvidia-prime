@@ -6,4 +6,4 @@ get-quirk-options /sbin
 prime-select /usr/bin
 prime-supported /usr/bin
 oem /usr/lib/ubiquity/dm-scripts
-debian/nvidia-prime.service /lib/systemd/system
+debian/nvidia-hybrid-boot.service /lib/systemd/system
