@@ -40,6 +40,7 @@ import os
 import sys
 import re
 import subprocess
+import shutil
 
 from copy import deepcopy
 from subprocess import Popen, PIPE, CalledProcessError
@@ -104,6 +105,8 @@ class Switcher(object):
             return True
 
         sys.stdout.write('Info: selecting the %s profile\n' % (profile))
+
+        self._backup_grub_config()
 
         if profile == 'nvidia':
             # Always allow enabling nvidia
@@ -255,6 +258,11 @@ alias nvidia-modeset off'''
 
     def _update_grub(self):
         subprocess.call(['update-grub'])
+
+    def _backup_grub_config(self):
+        destination = '%s.prime-backup' % self._grub_path
+        if not os.path.isfile(destination):
+            shutil.copyfile(self._grub_path, destination)
 
 
 def check_root():
