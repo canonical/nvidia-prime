@@ -8,9 +8,8 @@ Vcs-Git: git://github.com/tseliot/nvidia-prime.git
 Vcs-Browser: http://github.com/tseliot/nvidia-prime
 
 Package: nvidia-prime
-Architecture: i386 amd64
-Depends: lightdm (>= 1.9.1) | gdm3 | kdm | sddm, bbswitch-dkms,
- pciutils, lsb-release, ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Architecture: all
+Depends: ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}
 Conflicts: hybrid-graphics
 Replaces: hybrid-graphics
 Provides: hybrid-graphics
