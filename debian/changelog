@@ -1,8 +1,30 @@
-nvidia-prime (0.8.6) UNRELEASED; urgency=medium
+nvidia-prime (0.8.6) bionic; urgency=medium
 
-  * 
+  [ Alberto Milone ]
+  * debian/control:
+    - Drop dependencies on bbswitch, lsb-release, pciutils,
+      and on login managers.
+    - Make nvidia-prime arch independent.
+  * debian/rules,
+    90-nvidia.conf,
+    debian/dirs.in,
+    debian/install.in,
+    oem/00-prime-offload,
+    prime-offload,
+    prime-switch:
+    - Remove obsolete files.
+  * prime-select,
+    debian/nvidia-prime.nvidia-prime-boot.service:
+    - Drop code to deal with alternatives, since the nvidia
+      packages don't use them any more.
+    - Rely on nouveau and vgaswitcheroo to switch off
+      the discrete GPU (LP: #1757180).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Mon, 19 Feb 2018 16:31:15 +0100
+  [ Bryan Quigley ]
+  * debian/nvidia-prime.upstart:
+    - Remove upstart file.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Tue, 20 Mar 2018 17:28:05 +0100
 
 nvidia-prime (0.8.5) artful; urgency=medium
 
