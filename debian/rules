@@ -56,9 +56,16 @@ regen-from-templates:
 	done
 
 override_dh_install:
-	dh_install --fail-missing -Xlib/systemd
-	# Do not install the systemd unit. The switcher will enable it on
+	# Do not enable the systemd unit. The switcher will enable it on
 	# demand
+	dh_install -p nvidia-prime
+	mkdir -p $(CURDIR)/debian/nvidia-prime/lib/systemd
+	dh_systemd_enable --no-enable --name=nvidia-prime-boot
+
+	dh_install --fail-missing -Xlib/systemd
+
+override_dh_installinit:
+	dh_installinit --noscripts
 
 override_dh_auto_clean:
 	for i in $(CURDIR)/debian/install \
