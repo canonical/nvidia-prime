@@ -147,7 +147,11 @@ class Switcher(object):
                                  self._grub_path, ['nouveau.runpm', 'video=VGA'])
         self._update_grub()
 
-        os.unlink(self._blacklist_file)
+        try:
+            os.unlink(self._blacklist_file)
+        except:
+            pass
+
         self._update_initramfs()
 
         self._disable_prime_service()
