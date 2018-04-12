@@ -1,3 +1,9 @@
+nvidia-prime (0.8.7) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 12 Apr 2018 12:56:44 +0200
+
 nvidia-prime (0.8.6) bionic; urgency=medium
 
   [ Alberto Milone ]
