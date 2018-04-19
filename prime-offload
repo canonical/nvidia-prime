@@ -1,0 +1,92 @@
+#!/bin/sh
+#
+# Copyright 2013 Canonical Ltd.
+#
+# Author: Alberto Milone <alberto.milone@canonical.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+LOG=/var/log/prime-offload.log
+prime_power=/proc/acpi/bbswitch
+prime_supported=/usr/bin/prime-supported
+
+# Remove any previous logs
+rm -f $LOG
+
+# Check hardware support here
+supported="`$prime_supported`"
+if [ -z "$supported" ]; then
+    echo "Sorry but your hardware configuration is not supported" \
+         >> $LOG 2>&1
+    exit 0
+fi
+
+# Only for NVIDIA's proprietary driver
+if ! lsmod | grep nvidia > /dev/null; then
+    # Sorry the driver is not is loaded
+    echo "Sorry the nvidia kernel module is not is loaded" \
+         >> $LOG 2>&1
+    exit 0
+fi
+
+# Check the xrandr version
+randr_ver="$(xrandr -v)"
+client=$(echo "$randr_ver" | grep "program" | awk '{print $NF}' | cut -d. -f2)
+client_point=$(echo "$randr_ver" | grep "program" | awk '{print $NF}' | cut -d. -f3)
+server=$(echo "$randr_ver" | grep -i "server" | awk '{print $NF}' | cut -d. -f2)
+
+# There may not be a point version
+[ -z "$client_point" ] && client_point=0
+
+if [ "$client" -ge 4 -a "$server" -ge 4 ]; then
+    # client and server ver >= 1.4
+    use_randr_names=true
+elif [ "$client" -eq 3 -a "$client_point" -eq 5 \
+       -a "$server" -ge 4 ]; then
+    # client ver 1.3.5 and server ver >= 1.4
+    use_randr_names=false
+else
+    # client and server ver < 1.4
+    echo "Sorry we only support randr 1.4 or higher" \
+         >> $LOG 2>&1
+    exit 0
+fi
+
+# Get the xrandr providers
+output="$(xrandr --listproviders)"
+
+if [ "$use_randr_names" = true ]; then
+    # Use the providers' names
+    src=$(echo "$output" | grep " Source" | \
+          head -n1 | awk '{print $NF}' | cut -d: -f2)
+    sink=$(echo -e "$output" | grep " Sink" | \
+           head -n1 | awk '{print $NF}' | cut -d: -f2)
+else
+    # Use the providers' ids
+    src=$(echo "$output" | grep " Source" | \
+          head -n1 | cut -d: -f3 | cut -d" " -f2)
+    sink=$(echo -e "$output" | grep " Sink" | \
+           head -n1 | cut -d: -f3 | cut -d" " -f2)
+fi
+
+# Pass provider or sink and source
+xrandr --setprovideroutputsource "$sink" "$src"
+
+# Make sure xrandr sees all the outputs
+xrandr --auto
+
+# Do not move up. Only now xrandr shows the outputs
+lvds=$(xrandr | grep -i -e "lvds" -e "edp" | head -n1 |cut -d " " -f 1)
+xrandr --output "$lvds" --off
+xrandr --output "$lvds" --auto
