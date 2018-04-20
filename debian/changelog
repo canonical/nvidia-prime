@@ -1,8 +1,18 @@
-nvidia-prime (0.8.8) UNRELEASED; urgency=medium
+nvidia-prime (0.8.8) bionic; urgency=medium
 
-  * 
+  * 90-nvidia.conf,
+    debian/dirs.in,
+    debian/install.in,
+    debian/rules,
+    oem/00-prime-offload,
+    prime-offload,
+    prime-switch:
+    - Restore the Lightdm configuration snippets, as it removing
+      them caused a black screen on boot on all the Ubuntu flavours
+      that rely on Lightdm (LP: #1764005).
+      Leave only prime-switch out, since a reboot is required now.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Fri, 20 Apr 2018 11:59:22 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 20 Apr 2018 12:25:01 +0200
 
 nvidia-prime (0.8.7) bionic; urgency=medium
 
