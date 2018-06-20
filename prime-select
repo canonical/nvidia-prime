@@ -125,36 +125,13 @@ class Switcher(object):
         return True
 
     def _disable_nvidia(self):
-        boot_params = {}
-        # Get the VGA connectors to disable on card1
-        # in the form of boot parameters
-        vga_params = self._get_boot_params_from_phantom_vga_connectors()
-        for elem in vga_params:
-            elems = elem.split('=')
-            boot_params[elems[0]] = elems[1]
-        boot_params['nouveau.runpm'] = '0'
-        self._add_boot_params(self._grub_cmdline_start, self._grub_path, boot_params)
-
-        self._update_grub()
-
         self._blacklist_nvidia()
-        self._update_initramfs()
-
-        self._enable_prime_service()
 
     def _enable_nvidia(self):
-        self._remove_boot_params(self._grub_cmdline_start,
-                                 self._grub_path, ['nouveau.runpm', 'video=VGA'])
-        self._update_grub()
-
         try:
             os.unlink(self._blacklist_file)
         except:
             pass
-
-        self._update_initramfs()
-
-        self._disable_prime_service()
 
     def _blacklist_nvidia(self):
         blacklist_text = '''# Do not modify
@@ -255,10 +232,6 @@ alias nvidia-modeset off'''
                 params.append(param)
         return params
 
-    def _update_initramfs(self):
-        subprocess.call(['update-initramfs', '-u'])
-        # This may not be necessary
-        subprocess.call(['update-initramfs', '-u', '-k', os.uname()[2]])
 
     def _update_grub(self):
         subprocess.call(['update-grub'])
