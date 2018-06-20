@@ -1,8 +1,11 @@
-nvidia-prime (0.8.9) UNRELEASED; urgency=medium
+nvidia-prime (0.8.9~ppa1) bionic; urgency=medium
 
-  * 
+  * debian/nvidia-prime.nvidia-prime-boot.service, debian/rules:
+    - Remove systemd service, which is no longer needed.
+  * prime-select:
+    - Do not require updating the initramfs or grub any more.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Wed, 20 Jun 2018 13:26:23 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 20 Jun 2018 17:51:34 +0200
 
 nvidia-prime (0.8.8) bionic; urgency=medium
 
