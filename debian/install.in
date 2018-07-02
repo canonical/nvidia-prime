@@ -1,7 +1,7 @@
 #LIGHTDM_CONF_FILENAME# #LIGHTDM_CONF_DIR#
 prime-quirks #MISC_DIR#
 prime-offload /sbin
-#prime-switch /sbin
+prime-switch /sbin
 get-quirk-options /sbin
 prime-select /usr/bin
 prime-supported /usr/bin
