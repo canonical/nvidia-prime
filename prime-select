@@ -115,9 +115,9 @@ class Switcher(object):
             self._enable_nvidia()
         else:
             # Make sure that the installed packages support PRIME
-            if not self._supports_prime():
-                sys.stderr.write('Error: the installed packages do not support PRIME\n')
-                return False
+            #if not self._supports_prime():
+            #    sys.stderr.write('Error: the installed packages do not support PRIME\n')
+            #    return False
             self._disable_nvidia()
 
         # Write the settings to the config file
