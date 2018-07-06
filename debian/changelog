@@ -1,8 +1,10 @@
-nvidia-prime (0.8.9~ppa2) UNRELEASED; urgency=medium
+nvidia-prime (0.8.9~ppa2) bionic; urgency=medium
 
-  * 
+  * prime-select:
+    - Do not check if PRIME is supported when disabling the dGPU.
+    - Enable KMS by default.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Mon, 02 Jul 2018 17:27:57 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 06 Jul 2018 14:53:02 +0200
 
 nvidia-prime (0.8.9~ppa1) bionic; urgency=medium
 
