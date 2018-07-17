@@ -52,6 +52,7 @@ class Switcher(object):
         self._power_profile_path = '/etc/prime-discrete'
         self._grub_path = '/etc/default/grub'
         self._grub_cmdline_start = 'GRUB_CMDLINE_LINUX_DEFAULT='
+        self._old_blacklist_file = '/etc/modprobe.d/blacklist-nvidia.conf'
         self._blacklist_file = '/lib/modprobe.d/blacklist-nvidia.conf'
         self._nvidia_kms_file = '/lib/modprobe.d/nvidia-kms.conf'
         self._gdm_conf_file = '/etc/gdm3/custom.conf'
@@ -126,9 +127,19 @@ class Switcher(object):
         return True
 
     def _disable_nvidia(self):
+        try:
+            os.unlink(self._old_blacklist_file)
+        except:
+            pass
+
         self._blacklist_nvidia()
 
     def _enable_nvidia(self):
+        try:
+            os.unlink(self._old_blacklist_file)
+        except:
+            pass
+
         try:
             os.unlink(self._blacklist_file)
         except:
