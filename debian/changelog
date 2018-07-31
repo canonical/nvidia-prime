@@ -1,8 +1,21 @@
-nvidia-prime (0.8.9) UNRELEASED; urgency=medium
+nvidia-prime (0.8.9) cosmic; urgency=medium
 
-  * 
+  [ Alberto Milone ]
+  * 90-nvidia.conf,
+    debian/rules,
+    prime-select:
+    - Make sure to remove the old blacklist file.
+    - Use /lib for blacklist-nvidia.conf.
+    - Do not check if prime is supported when disabling nvidia.
+    - Enable KMS by default.
+    - Install prime-switch again (LP: #1778011).
+  * debian/nvidia-prime.nvidia-prime-boot.service:
+    - Remove service.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Wed, 20 Jun 2018 13:26:23 +0200
+  [ Alex Tu ]
+    * prime-select: avoid regenerating the initramfs.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Tue, 31 Jul 2018 16:47:20 +0200
 
 nvidia-prime (0.8.8) bionic; urgency=medium
 
