@@ -19,5 +19,7 @@
 #
 
 # Call the GPU manager
-/usr/bin/gpu-manager --log /var/log/gpu-manager.log
+/usr/bin/gpu-manager --log /var/log/gpu-manager-switch.log
+# Give udev the time to add back the drm device
+udevadm settle --timeout=2
 exit 0
