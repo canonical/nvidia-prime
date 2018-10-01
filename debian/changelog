@@ -1,8 +1,11 @@
-nvidia-prime (0.8.10) UNRELEASED; urgency=medium
+nvidia-prime (0.8.10) cosmic; urgency=medium
 
-  * 
+  * prime-switch:
+    - Give udev the time to add the drm device. Fixes a race
+      condition that causes problems when using lightdm and
+      sddm (LP: #1778011).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Fri, 28 Sep 2018 11:05:01 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Mon, 01 Oct 2018 11:06:55 +0200
 
 nvidia-prime (0.8.9) cosmic; urgency=medium
 
