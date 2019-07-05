@@ -18,7 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 LOG=/var/log/prime-offload.log
-prime_power=/proc/acpi/bbswitch
 prime_supported=/usr/bin/prime-supported
 
 # Remove any previous logs
