@@ -1,3 +1,9 @@
+nvidia-prime (0.8.11) UNRELEASED; urgency=medium
+
+  * prime-select: add on-demand mode (LP: #1824282)
+
+ -- Yuan-Chen Cheng <yc.cheng@canonical.com>  Thu, 04 Jul 2019 21:37:07 +0800
+
 nvidia-prime (0.8.10) cosmic; urgency=medium
 
   * prime-switch:
