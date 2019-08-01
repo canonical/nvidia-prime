@@ -1,3 +1,9 @@
+nvidia-prime (0.8.12) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 01 Aug 2019 09:26:26 +0200
+
 nvidia-prime (0.8.11) eoan; urgency=medium
 
   [ Yuan-Chen Cheng ]
