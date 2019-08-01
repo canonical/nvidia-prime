@@ -1,8 +1,11 @@
-nvidia-prime (0.8.12) UNRELEASED; urgency=medium
+nvidia-prime (0.8.12) eoan; urgency=medium
 
-  * 
+  * prime-select:
+    - Disable KMS by default, but keep creating the
+      /lib/modprobe.d/nvidia-kms.conf file, so that it can be
+      re-enabled easily.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Thu, 01 Aug 2019 09:26:26 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 01 Aug 2019 09:29:01 +0200
 
 nvidia-prime (0.8.11) eoan; urgency=medium
 
