@@ -1,8 +1,11 @@
-nvidia-prime (0.8.13) UNRELEASED; urgency=medium
+nvidia-prime (0.8.13) eoan; urgency=medium
 
-  * 
+  * prime-select:
+    - All modes require a reboot now.
+      This allows disabling the dGPU, either in some of its pci functions
+      (such as audio, in on-demand mode) or completely (in intel mode).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Wed, 21 Aug 2019 17:18:34 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 21 Aug 2019 17:22:10 +0200
 
 nvidia-prime (0.8.12) eoan; urgency=medium
 
