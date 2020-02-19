@@ -1,8 +1,14 @@
-nvidia-prime (0.8.14) UNRELEASED; urgency=medium
+nvidia-prime (0.8.14) focal; urgency=medium
 
-  * 
+  * prime-offload:
+    - Detect nvidia modules more accurately before using prime.
+      We don't want to catch i2c_nvidia_gpu or any other module
+      that is not relevant.
+  * prime-select:
+    - Use udev rules to run early (LP: #1848326).
+    - Remove the 380 pci class.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Wed, 19 Feb 2020 13:21:58 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 19 Feb 2020 13:24:26 +0100
 
 nvidia-prime (0.8.13) eoan; urgency=medium
 
