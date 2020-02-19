@@ -32,7 +32,7 @@ if [ -z "$supported" ]; then
 fi
 
 # Only for NVIDIA's proprietary driver
-if ! lsmod | grep nvidia > /dev/null; then
+if ! lsmod | grep ^nvidia > /dev/null; then
     # Sorry the driver is not is loaded
     echo "Sorry the nvidia kernel module is not is loaded" \
          >> $LOG 2>&1
