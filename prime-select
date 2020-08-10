@@ -57,6 +57,7 @@ class Switcher(object):
         self._old_blacklist_file = '/etc/modprobe.d/blacklist-nvidia.conf'
         self._blacklist_file = '/lib/modprobe.d/blacklist-nvidia.conf'
         self._nvidia_kms_file = '/lib/modprobe.d/nvidia-kms.conf'
+        self._nvidia_runtimepm_file = '/lib/modprobe.d/nvidia-runtimepm.conf'
         self._gdm_conf_file = '/etc/gdm3/custom.conf'
         self._udev_rule_file = '/lib/udev/rules.d/50-pm-nvidia.rules'
         self._old_udev_rule_file = '/lib/udev/rules.d/80-pm-nvidia.rules'
@@ -112,6 +113,25 @@ class Switcher(object):
 
         return status
 
+    def _supports_runtimepm(self):
+        return os.path.isfile('/run/nvidia_runtimepm_supported')
+
+    def _is_runtimepm_enabled(self):
+        return os.path.isfile('/run/nvidia_runtimepm_enabled')
+
+    def _enable_runtimepm(self):
+        print('Writing %s' % self._nvidia_runtimepm_file)
+        pm_fd = open(self._nvidia_runtimepm_file, 'w')
+        pm_fd.write('options nvidia \"NVreg_DynamicPowerManagement=0x02\"\n')
+        pm_fd.close()
+
+    def _disable_runtimepm(self):
+        try:
+            print('Deleting %s' % self._nvidia_runtimepm_file)
+            os.unlink(self._nvidia_runtimepm_file)
+        except:
+            pass
+
     def enable_profile(self, profile):
         current_profile = self._get_profile()
 
@@ -131,6 +151,8 @@ class Switcher(object):
             self._enable_nvidia()
         elif profile == "on-demand":
             self._disable_nvidia(keep_nvidia_modules=True)
+            if self._supports_runtimepm():
+                self._enable_runtimepm()
         else:
             # Make sure that the installed packages support PRIME
             #if not self._supports_prime():
@@ -207,6 +229,8 @@ ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x038000"
             os.unlink(self._old_blacklist_file)
         except:
             pass
+
+        self._disable_runtimepm()
 
         try:
             os.unlink(self._blacklist_file)
