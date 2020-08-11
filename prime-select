@@ -165,17 +165,17 @@ class Switcher(object):
 
         return True
 
-    def _create_pm_udev_rule(self, keep_nvidia=True):
-        udev_rule_stub = '''# Remove NVIDIA USB xHCI Host Controller devices, if present
+    def _create_pm_udev_rule(self, keep_nvidia=True, with_workaround=False):
+        workaround = '''# Remove NVIDIA USB xHCI Host Controller devices, if present
 ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{remove}="1"
 
 # Remove NVIDIA USB Type-C UCSI devices, if present
 ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{remove}="1"
 
 # Remove NVIDIA Audio devices, if present
-ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{remove}="1"
-%s
-# Enable runtime PM for NVIDIA VGA/3D controller devices on driver bind
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{remove}="1"\n'''
+
+        udev_rule_stub = '''%s%s# Enable runtime PM for NVIDIA VGA/3D controller devices on driver bind
 ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="auto"
 ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="auto"
 
@@ -183,16 +183,20 @@ ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200
 ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="on"
 ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="on"'''
 
-        disable_nvidia_stub = '''
-# Remove NVIDIA VGA/3D controller
+        disable_nvidia_stub = '''# Remove NVIDIA VGA/3D controller
 ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", ATTR{remove}="1"
-ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x038000", ATTR{remove}="1"
-'''
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x038000", ATTR{remove}="1"\n'''
+
+        if with_workaround:
+            workaround_stub = workaround
+        else:
+            workaround_stub = ''
+
         if keep_nvidia or not self._has_intel_gpu():
             complete_stub = ''
         else:
             complete_stub = disable_nvidia_stub
-        udev_rule = udev_rule_stub % (complete_stub)
+        udev_rule = udev_rule_stub % (complete_stub, workaround_stub)
 
         try:
             os.unlink(self._old_udev_rule_file)
