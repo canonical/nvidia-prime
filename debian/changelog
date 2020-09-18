@@ -1,8 +1,16 @@
-nvidia-prime (0.8.15) UNRELEASED; urgency=medium
+nvidia-prime (0.8.15) groovy; urgency=medium
 
-  * 
+  [ Alberto Milone ]
+  * prime-select:
+    - Enable runtimepm in on-demand mode if supported (LP: #1895855).
+    - Disable workaround for on-demand mode.
+    - Enable KMS if runtimepm is supported.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Mon, 10 Aug 2020 16:19:56 +0200
+  [ Cyrus Lien ]
+  * Use regular expression to match all NVIDIA display devices in
+    power-saving mode.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 18 Sep 2020 16:38:19 +0200
 
 nvidia-prime (0.8.14) focal; urgency=medium
 
