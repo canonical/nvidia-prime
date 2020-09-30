@@ -59,8 +59,6 @@ class Switcher(object):
         self._nvidia_kms_file = '/lib/modprobe.d/nvidia-kms.conf'
         self._nvidia_runtimepm_file = '/lib/modprobe.d/nvidia-runtimepm.conf'
         self._gdm_conf_file = '/etc/gdm3/custom.conf'
-        self._udev_rule_file = '/lib/udev/rules.d/50-pm-nvidia.rules'
-        self._old_udev_rule_file = '/lib/udev/rules.d/80-pm-nvidia.rules'
 
     def _get_profile(self):
 
@@ -166,47 +164,6 @@ class Switcher(object):
 
         return True
 
-    def _create_pm_udev_rule(self, keep_nvidia=True, with_workaround=False):
-        workaround = '''# Remove NVIDIA USB xHCI Host Controller devices, if present
-ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{remove}="1"
-
-# Remove NVIDIA USB Type-C UCSI devices, if present
-ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{remove}="1"
-
-# Remove NVIDIA Audio devices, if present
-ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{remove}="1"\n'''
-
-        udev_rule_stub = '''%s%s# Enable runtime PM for NVIDIA VGA/3D controller devices on driver bind
-ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="auto"
-ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="auto"
-
-# Disable runtime PM for NVIDIA VGA/3D controller devices on driver unbind
-ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="on"
-ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="on"'''
-
-        disable_nvidia_stub = '''# Remove NVIDIA VGA/3D controller
-ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{remove}="1"\n'''
-
-        if with_workaround:
-            workaround_stub = workaround
-        else:
-            workaround_stub = ''
-
-        if keep_nvidia or not self._has_intel_gpu():
-            complete_stub = ''
-        else:
-            complete_stub = disable_nvidia_stub
-        udev_rule = udev_rule_stub % (complete_stub, workaround_stub)
-
-        try:
-            os.unlink(self._old_udev_rule_file)
-        except:
-            pass
-
-        rule_fd = open(self._udev_rule_file, 'w')
-        rule_fd.write('%s\n' % (udev_rule))
-        rule_fd.close()
-
     def _disable_nvidia(self, keep_nvidia_modules=False):
         try:
             os.unlink(self._old_blacklist_file)
@@ -221,13 +178,6 @@ ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]
         else:
             self._blacklist_nvidia()
 
-        try:
-            os.unlink(self._old_udev_rule_file)
-        except:
-            pass
-
-        self._create_pm_udev_rule(keep_nvidia_modules)
-
     def _enable_nvidia(self):
         try:
             os.unlink(self._old_blacklist_file)
@@ -238,11 +188,6 @@ ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]
 
         try:
             os.unlink(self._blacklist_file)
-        except:
-            pass
-
-        try:
-            os.unlink(self._udev_rule_file)
         except:
             pass
 
