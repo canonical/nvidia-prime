@@ -6,11 +6,10 @@ nvidia-prime (0.8.15) groovy; urgency=medium
     - Disable workaround for on-demand mode.
     - Enable KMS if runtimepm is supported.
 
-  [ Cyrus Lien ]
-  * Use regular expression to match all NVIDIA display devices in
-    power-saving mode.
+  [ Kai-Heng Feng ]
+  * prime-select: Remove udev rules
 
- -- Alberto Milone <alberto.milone@canonical.com>  Fri, 18 Sep 2020 16:38:19 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 09 Oct 2020 14:50:37 +0200
 
 nvidia-prime (0.8.14) focal; urgency=medium
 
