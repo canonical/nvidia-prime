@@ -1,21 +1,19 @@
-nvidia-prime (0.8.16) UNRELEASED; urgency=medium
-
-  * 
-
- -- Alberto Milone <alberto.milone@canonical.com>  Wed, 18 Nov 2020 15:08:30 +0100
-
-nvidia-prime (0.8.15) groovy; urgency=medium
+nvidia-prime (0.8.15.3~0.20.04.1) focal; urgency=medium
 
   [ Alberto Milone ]
   * prime-select:
     - Enable runtimepm in on-demand mode if supported (LP: #1895855).
     - Disable workaround for on-demand mode.
     - Enable KMS if runtimepm is supported.
+  * debian/postinst.in:
+    - Remove obsolete udev rules in the postinst too.
+  * debian/rules:
+    - Add postinst file to the autoclean target.
 
   [ Kai-Heng Feng ]
-  * prime-select: Remove udev rules
+  * prime-select: Remove udev rules (LP: #1904583).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Fri, 09 Oct 2020 14:50:37 +0200
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 20 Nov 2020 16:19:39 +0100
 
 nvidia-prime (0.8.14) focal; urgency=medium
 
