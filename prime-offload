@@ -18,7 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 LOG=/var/log/prime-offload.log
-prime_power=/proc/acpi/bbswitch
 prime_supported=/usr/bin/prime-supported
 
 # Remove any previous logs
@@ -33,7 +32,7 @@ if [ -z "$supported" ]; then
 fi
 
 # Only for NVIDIA's proprietary driver
-if ! lsmod | grep nvidia > /dev/null; then
+if ! lsmod | grep ^nvidia > /dev/null; then
     # Sorry the driver is not is loaded
     echo "Sorry the nvidia kernel module is not is loaded" \
          >> $LOG 2>&1

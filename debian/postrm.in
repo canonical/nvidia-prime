@@ -24,6 +24,9 @@ case "$1" in
             # Remove the settings
             rm -f /etc/prime-discrete
         fi
+        # Remove obsolete udev rules
+        rm -f /lib/udev/rules.d/50-pm-nvidia.rules
+        rm -f /lib/udev/rules.d/80-pm-nvidia.rules
     ;;
 
     *)

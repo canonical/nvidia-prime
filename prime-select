@@ -8,11 +8,13 @@
 #       Script to switch between NVIDIA and Intel graphics driver libraries.
 #
 #       Usage:
-#           prime-select   nvidia|intel|query
-#           nvidia:   switches to NVIDIA's version of libGL.so
+#           prime-select   nvidia|intel|on-demand|query
+#           nvidia:    switches to NVIDIA's version of libGL.so
+#           on-demand: load NVIDIA driver, and on-demend for others
 #           intel: switches to the open-source version of libGL.so
 #           query: checks which version is currently active and writes
-#                  "nvidia", "intel" or "unknown" to the standard output
+#                  "nvidia", "intel", "on-demand" or "unknown" to the
+#                  standard output
 #
 #       Permission is hereby granted, free of charge, to any person
 #       obtaining a copy of this software and associated documentation
@@ -55,6 +57,7 @@ class Switcher(object):
         self._old_blacklist_file = '/etc/modprobe.d/blacklist-nvidia.conf'
         self._blacklist_file = '/lib/modprobe.d/blacklist-nvidia.conf'
         self._nvidia_kms_file = '/lib/modprobe.d/nvidia-kms.conf'
+        self._nvidia_runtimepm_file = '/lib/modprobe.d/nvidia-runtimepm.conf'
         self._gdm_conf_file = '/etc/gdm3/custom.conf'
 
     def _get_profile(self):
@@ -64,8 +67,11 @@ class Switcher(object):
         except:
             return 'unknown'
 
-        if settings.read().strip() == 'on':
+        config = settings.read().strip()
+        if config == 'on':
             return 'nvidia'
+        elif config == "on-demand":
+            return 'on-demand'
         else:
             return 'intel'
 
@@ -80,6 +86,8 @@ class Switcher(object):
     def _write_profile(self, profile):
         if profile == 'intel':
             nvidia_power = 'off'
+        elif profile == "on-demand":
+            nvidia_power = "on-demand"
         elif profile == 'nvidia':
             nvidia_power = 'on'
         else:
@@ -90,12 +98,37 @@ class Switcher(object):
         settings.write('%s\n' % nvidia_power)
         settings.close()
 
-    def _supports_prime(self):
-        #i915 nvidia_drm
-        # modinfo nvidia-drm
-        # /var/lib/ubuntu-drivers-common/requires_offloading
-        return (os.path.isfile('/var/lib/ubuntu-drivers-common/requires_offloading') or
-                os.path.isfile('/run/u-d-c-nvidia-was-loaded'))
+    def _has_intel_gpu(self):
+        status = False;
+
+        path = '/var/lib/ubuntu-drivers-common/last_gfx_boot'
+        if os.path.isfile(path):
+            with open(path, 'r') as f:
+                t = f.read()
+                if t.find('8086') != -1:
+                    status = True
+                f.close()
+
+        return status
+
+    def _supports_runtimepm(self):
+        return os.path.isfile('/run/nvidia_runtimepm_supported')
+
+    def _is_runtimepm_enabled(self):
+        return os.path.isfile('/run/nvidia_runtimepm_enabled')
+
+    def _enable_runtimepm(self):
+        print('Writing %s' % self._nvidia_runtimepm_file)
+        pm_fd = open(self._nvidia_runtimepm_file, 'w')
+        pm_fd.write('options nvidia \"NVreg_DynamicPowerManagement=0x02\"\n')
+        pm_fd.close()
+
+    def _disable_runtimepm(self):
+        try:
+            print('Deleting %s' % self._nvidia_runtimepm_file)
+            os.unlink(self._nvidia_runtimepm_file)
+        except:
+            pass
 
     def enable_profile(self, profile):
         current_profile = self._get_profile()
@@ -114,6 +147,11 @@ class Switcher(object):
             # Always allow enabling nvidia
             # (No need to check if nvidia is available)
             self._enable_nvidia()
+        elif profile == "on-demand":
+            self._disable_nvidia(keep_nvidia_modules=True)
+            if self._supports_runtimepm():
+                self._enable_runtimepm()
+                self._enable_kms()
         else:
             # Make sure that the installed packages support PRIME
             #if not self._supports_prime():
@@ -126,13 +164,19 @@ class Switcher(object):
 
         return True
 
-    def _disable_nvidia(self):
+    def _disable_nvidia(self, keep_nvidia_modules=False):
         try:
             os.unlink(self._old_blacklist_file)
         except:
             pass
 
-        self._blacklist_nvidia()
+        if keep_nvidia_modules:
+            try:
+                os.unlink(self._blacklist_file)
+            except:
+                pass
+        else:
+            self._blacklist_nvidia()
 
     def _enable_nvidia(self):
         try:
@@ -140,13 +184,16 @@ class Switcher(object):
         except:
             pass
 
+        self._disable_runtimepm()
+
         try:
             os.unlink(self._blacklist_file)
         except:
             pass
 
-        # We only enable KMS once, so that the user
-        # can disable it
+        # Create configuration file so that users can enable
+        # KMS easily.
+        # modeset is off by default.
         if not os.path.isfile(self._nvidia_kms_file):
             self._enable_kms()
 
@@ -163,13 +210,21 @@ alias nvidia-modeset off'''
         blacklist_fd.write(blacklist_text)
         blacklist_fd.close()
 
-    def _enable_kms(self):
+    def _write_kms_settings(self, value):
+        # This is actually disabled now, but it can be enabled
+        # by users with a simple change.
         kms_text = '''# This file was generated by nvidia-prime
-# Set value to 0 to disable modesetting
-options nvidia-drm modeset=1'''
+# Set value to 1 to enable modesetting
+options nvidia-drm modeset=%d''' % (value)
         kms_fd = open(self._nvidia_kms_file, 'w')
         kms_fd.write(kms_text)
         kms_fd.close()
+
+    def _enable_kms(self):
+        self._write_kms_settings(1)
+
+    def _disable_kms(self):
+        self._write_kms_settings(0)
 
     def _add_boot_params(self, pattern, path, params):
         it = 0
@@ -269,7 +324,7 @@ def handle_query_error():
     exit(1)
 
 def usage():
-    sys.stderr.write("Usage: %s nvidia|intel|query\n" % (sys.argv[0]))
+    sys.stderr.write("Usage: %s nvidia|intel|on-demand|query\n" % (sys.argv[0]))
 
 if __name__ == '__main__':
     try:
@@ -283,7 +338,7 @@ if __name__ == '__main__':
 
     switcher = Switcher()
 
-    if arg == 'intel' or arg == 'nvidia':
+    if arg in ['intel', 'nvidia', 'on-demand']:
         check_root()
         switcher.enable_profile(arg)
     elif arg == 'query':
