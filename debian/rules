@@ -40,6 +40,7 @@ regen-from-templates:
 	for i in $(CURDIR)/debian/install \
 	     $(CURDIR)/debian/dirs \
 		 $(CURDIR)/debian/preinst \
+		 $(CURDIR)/debian/postinst \
 		 $(CURDIR)/debian/postrm; do \
 		sed -e 's|#XORG_CONF#|$(XORG_CONF)|g' \
 			-e 's|#XORG_TEMPLATE#|$(XORG_TEMPLATE)|g' \
