@@ -23,10 +23,9 @@ case "$1" in
         if [ ! "$1" = "upgrade" ]; then
             # Remove the settings
             rm -f /etc/prime-discrete
+            rm -f /lib/udev/rules.d/50-pm-nvidia.rules
+            rm -f /lib/udev/rules.d/80-pm-nvidia.rules
         fi
-        # Remove obsolete udev rules
-        rm -f /lib/udev/rules.d/50-pm-nvidia.rules
-        rm -f /lib/udev/rules.d/80-pm-nvidia.rules
     ;;
 
     *)
