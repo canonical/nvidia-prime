@@ -98,14 +98,14 @@ class Switcher(object):
         settings.write('%s\n' % nvidia_power)
         settings.close()
 
-    def _has_intel_gpu(self):
+    def _has_integrated_gpu(self):
         status = False;
 
         path = '/var/lib/ubuntu-drivers-common/last_gfx_boot'
         if os.path.isfile(path):
             with open(path, 'r') as f:
                 t = f.read()
-                if t.find('8086') != -1:
+                if t.find('8086') != -1 or t.lower().find('10de') != -1:
                     status = True
                 f.close()
 
@@ -131,6 +131,10 @@ class Switcher(object):
             pass
 
     def enable_profile(self, profile):
+        if not self._has_integrated_gpu():
+            sys.stderr.write('Error: no integrated GPU detected.\n')
+            return False
+
         current_profile = self._get_profile()
 
         if profile == current_profile:
