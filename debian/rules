@@ -60,6 +60,7 @@ override_dh_auto_clean:
 	for i in $(CURDIR)/debian/install \
 	     $(CURDIR)/debian/dirs \
 		 $(CURDIR)/debian/preinst \
+		 $(CURDIR)/debian/postinst \
 		 $(CURDIR)/debian/postrm; do \
 		rm -f $$i; \
 	done
