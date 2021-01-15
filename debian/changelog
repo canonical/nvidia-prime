@@ -1,8 +1,14 @@
-nvidia-prime (0.8.15.2) UNRELEASED; urgency=medium
+nvidia-prime (0.8.15.2) hirsute; urgency=medium
 
-  * 
+  * debian/postrm.in:
+    - Revert "Remove obsolete udev rules during postrm upgrade too".
+  * debian/postinst.in:
+    - Move the removal of the obsolete udev rules here.
+  * prime-select:
+    - Do not try to apply any changes unless an integrated GPU is
+      available.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Thu, 07 Jan 2021 16:11:58 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 15 Jan 2021 15:36:50 +0100
 
 nvidia-prime (0.8.15.1) hirsute; urgency=medium
 
