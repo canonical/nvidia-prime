@@ -1,8 +1,9 @@
-nvidia-prime (0.8.15.3) UNRELEASED; urgency=medium
+nvidia-prime (0.8.15.3) hirsute; urgency=medium
 
-  * 
+  * debian/rules:
+    - Add postinst file to the autoclean target.
 
- -- Alberto Milone <alberto.milone@canonical.com>  Fri, 15 Jan 2021 17:38:42 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Mon, 18 Jan 2021 15:06:31 +0100
 
 nvidia-prime (0.8.15.2) hirsute; urgency=medium
 
