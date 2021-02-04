@@ -43,6 +43,8 @@ import sys
 import re
 import subprocess
 import shutil
+import itertools
+import time
 
 from copy import deepcopy
 from subprocess import Popen, PIPE, CalledProcessError
@@ -152,10 +154,10 @@ class Switcher(object):
             # (No need to check if nvidia is available)
             self._enable_nvidia()
         elif profile == "on-demand":
-            self._disable_nvidia(keep_nvidia_modules=True)
             if self._supports_runtimepm():
                 self._enable_runtimepm()
                 self._enable_kms()
+            self._disable_nvidia(keep_nvidia_modules=True)
         else:
             # Make sure that the installed packages support PRIME
             #if not self._supports_prime():
@@ -182,6 +184,9 @@ class Switcher(object):
         else:
             self._blacklist_nvidia()
 
+        # Update the initramfs
+        self._update_initramfs()
+
     def _enable_nvidia(self):
         try:
             os.unlink(self._old_blacklist_file)
@@ -200,6 +205,9 @@ class Switcher(object):
         # modeset is off by default.
         if not os.path.isfile(self._nvidia_kms_file):
             self._enable_kms()
+
+        # Update the initramfs
+        self._update_initramfs()
 
     def _blacklist_nvidia(self):
         blacklist_text = '''# Do not modify
@@ -308,6 +316,25 @@ options nvidia-drm modeset=%d''' % (value)
                 params.append(param)
         return params
 
+    def _update_initramfs(self):
+        # Create spinner to give feed back on the
+        # operation
+        spinner = itertools.cycle ( ['-', '/', '|', '\\'])
+        proc = subprocess.Popen(['update-initramfs', '-u'],stdout=subprocess.PIPE)
+        print('Updating the initramfs. Please wait for the operation to complete:')
+
+        # Check if process is still running
+        while proc.poll()==None:
+            # Print the spinner
+            sys.stdout.write(spinner.__next__())
+            sys.stdout.flush()
+            sys.stdout.write('\b')
+            time.sleep(0.2)
+
+        print('Done')
+
+        # Print out the output
+        output=proc.communicate()[0]
 
     def _update_grub(self):
         subprocess.call(['update-grub'])
