@@ -1,8 +1,13 @@
-nvidia-prime (0.8.16) UNRELEASED; urgency=medium
+nvidia-prime (0.8.16) hirsute; urgency=medium
+ 
+  * prime-select:
+    - Make sure to update the initramfs, so that
+      the driver options can be applied correctly.
+      This time around we can also provide visual
+      feedback (in the form of a progress spinner)
+      while update-initramfs is running.
 
-  * 
-
- -- Alberto Milone <alberto.milone@canonical.com>  Thu, 04 Feb 2021 11:08:36 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 05 Feb 2021 16:32:19 +0100
 
 nvidia-prime (0.8.15.3) hirsute; urgency=medium
 
