@@ -1,8 +1,13 @@
-nvidia-prime (0.8.16~0.20.04.1) UNRELEASED; urgency=medium
+nvidia-prime (0.8.16~0.20.04.1) focal; urgency=medium
 
-  * 
+  * prime-select:
+    - Make sure to update the initramfs, so that
+      the driver options can be applied correctly.
+      This time around we can also provide visual
+      feedback (in the form of a progress spinner)
+      while update-initramfs is running (LP: #1915003).
 
- -- Alberto Milone <alberto.milone@canonical.com>  Wed, 10 Feb 2021 12:38:21 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Wed, 10 Feb 2021 12:38:51 +0100
 
 nvidia-prime (0.8.15.3~0.20.04.1) focal; urgency=medium
 
