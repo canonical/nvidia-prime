@@ -1,8 +1,10 @@
-nvidia-prime (0.8.16.2) UNRELEASED; urgency=medium
+nvidia-prime (0.8.16.2) hirsute; urgency=medium
+ 
+  * prime-select:
+    - Catch BrokenPipeError. Fixes
+      https://errors.ubuntu.com/problem/cd1fe5ff88b744e0d29132fef0be40627b6614e0
 
-  * 
-
- -- Alberto Milone <alberto.milone@canonical.com>  Thu, 18 Mar 2021 11:58:56 +0100
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 18 Mar 2021 11:59:42 +0100
 
 nvidia-prime (0.8.16.1) hirsute; urgency=medium
 
