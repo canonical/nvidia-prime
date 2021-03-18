@@ -325,11 +325,14 @@ options nvidia-drm modeset=%d''' % (value)
 
         # Check if process is still running
         while proc.poll()==None:
-            # Print the spinner
-            sys.stdout.write(spinner.__next__())
-            sys.stdout.flush()
-            sys.stdout.write('\b')
-            time.sleep(0.2)
+            try:
+                # Print the spinner
+                sys.stdout.write(spinner.__next__())
+                sys.stdout.flush()
+                sys.stdout.write('\b')
+                time.sleep(0.2)
+            except BrokenPipeError:
+                return False
 
         print('Done')
 
