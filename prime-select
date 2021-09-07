@@ -100,6 +100,61 @@ class Switcher(object):
         settings.write('%s\n' % nvidia_power)
         settings.close()
 
+    def _is_laptop(self):
+        # Chassis types:
+        #
+        # 01 Other
+        # 02 Unknown
+        # 03 Desktop
+        # 04 Low Profile Desktop
+        # 05 Pizza Box
+        # 06 Mini Tower
+        # 07 Tower
+        # 08 Portable
+        # 09 Laptop
+        # 10 Notebook
+        # 11 Hand Held
+        # 12 Docking Station
+        # 13 All In One
+        # 14 Sub Notebook
+        # 15 Space-saving
+        # 16 Lunch Box
+        # 17 Main Server Chassis
+        # 18 Expansion Chassis
+        # 19 Sub Chassis
+        # 20 Bus Expansion Chassis
+        # 21 Peripheral Chassis
+        # 22 RAID Chassis
+        # 23 Rack Mount Chassis
+        # 24 Sealed-case PC
+        # 25 Multi-system
+        # 26 CompactPCI
+        # 27 AdvancedTCA
+        # 28 Blade
+        # 29 Blade Enclosing
+        # 30 Tablet
+        # 31 Convertible
+        # 32 Detachable
+        # 33 IoT Gateway
+        # 34 Embedded PC
+        # 35 Mini PC
+        # 36 Stick PC
+        path = '/sys/devices/virtual/dmi/id/chassis_type'
+
+        if os.path.isfile(path):
+            with open(path, 'r') as f:
+                chassis_type = f.read()
+                f.close()
+                if chassis_type:
+                    chassis_type = int(chassis_type.strip())
+                else:
+                    return -1
+
+                if chassis_type in (8, 9, 10, 31):
+                    return 1
+                else:
+                    return 0
+
     def _has_integrated_gpu(self):
         status = False;
 
@@ -154,9 +209,11 @@ class Switcher(object):
             # (No need to check if nvidia is available)
             self._enable_nvidia()
         elif profile == "on-demand":
-            if self._supports_runtimepm():
-                self._enable_runtimepm()
-                self._enable_kms()
+            # Enable RTD3 only on laptops
+            if self._is_laptop() > 0:
+                if self._supports_runtimepm():
+                    self._enable_runtimepm()
+            self._enable_kms()
             self._disable_nvidia(keep_nvidia_modules=True)
         else:
             # Make sure that the installed packages support PRIME
