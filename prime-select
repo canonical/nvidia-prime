@@ -155,6 +155,32 @@ class Switcher(object):
                 else:
                     return 0
 
+
+    def _get_bootvga_card(self):
+        bootvga = ''
+        cards = glob.glob('/sys/class/drm/card[0-9]')
+        for card in cards:
+            bootvga_path = os.path.join(card, 'device/boot_vga')
+            try:
+                with open(bootvga_path, 'r') as f:
+                    t = f.read()
+                    f.close()
+                    if t:
+                        if int(t.strip()) > 0:
+                            bootvga = card
+                            break
+            except:
+                pass
+        return bootvga
+
+    def _get_card_vendor(self, card):
+        vendor_path = os.path.join(card, 'device/vendor')
+        with open(vendor_path, 'r') as f:
+            t = f.read()
+            f.close()
+            return t.strip()
+        return ''
+
     def _has_integrated_gpu(self):
         status = False;
 
@@ -162,9 +188,15 @@ class Switcher(object):
         if os.path.isfile(path):
             with open(path, 'r') as f:
                 t = f.read()
-                if t.find('8086') != -1 or t.lower().find('10de') != -1:
+                if t.find('8086') != -1 or t.lower().find('1002') != -1:
                     status = True
                 f.close()
+        else:
+            card = self._get_bootvga_card()
+            if card:
+                vendor = self._get_card_vendor(card)
+                if t.find('8086') != -1 or t.lower().find('1002') != -1:
+                    status = True
 
         return status
 
