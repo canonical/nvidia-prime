@@ -1,9 +1,18 @@
-nvidia-prime (0.8.17) UNRELEASED; urgency=medium
+nvidia-prime (0.8.17) impish; urgency=medium
 
-  * 
-  * 
+  [ Jeremy Szu ]
+  * Set on-demand mode as default nvidia mode (LP: #1942307)
 
- -- Alberto Milone <alberto.milone@canonical.com>  Tue, 07 Sep 2021 16:15:26 +0200
+  [ Alberto Milone ]
+  * prime-select:
+    - Detect chassis type and enable RTD3 only
+      on laptops (LP: #1942788).
+    - on-demand mode doesn't need to depend on
+      RTD3 (LP: #1942789).
+    - Use bootvga detection when last_gfx_boot
+      is not available.
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Fri, 17 Sep 2021 16:45:11 +0200
 
 nvidia-prime (0.8.16.2) hirsute; urgency=medium
  
