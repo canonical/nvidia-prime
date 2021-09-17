@@ -25,7 +25,8 @@ case "$1" in
         fi
 
         if [ ! -f /etc/prime-discrete ]; then
-            echo "on" > /etc/prime-discrete
+            # Supported if the version of nvidia driver is greater than 450
+            echo "on-demand" > /etc/prime-discrete
         fi
     ;;
 
