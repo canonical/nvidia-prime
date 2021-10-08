@@ -1,10 +1,4 @@
-nvidia-prime (0.8.17.1) UNRELEASED; urgency=medium
-
-  * 
-
- -- Alberto Milone <alberto.milone@canonical.com>  Fri, 08 Oct 2021 14:24:08 +0200
-
-nvidia-prime (0.8.17) impish; urgency=medium
+nvidia-prime (0.8.16.2~0.21.04.1) hirsute; urgency=medium
 
   [ Jeremy Szu ]
   * Set on-demand mode as default nvidia mode (LP: #1942307)
@@ -17,6 +11,8 @@ nvidia-prime (0.8.17) impish; urgency=medium
       RTD3 (LP: #1942789).
     - Use bootvga detection when last_gfx_boot
       is not available.
+    - Don't check the current profile when setting
+      a profile (LP: #1946476).
 
  -- Alberto Milone <alberto.milone@canonical.com>  Fri, 17 Sep 2021 16:45:11 +0200
 
