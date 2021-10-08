@@ -224,14 +224,6 @@ class Switcher(object):
             sys.stderr.write('Error: no integrated GPU detected.\n')
             return False
 
-        current_profile = self._get_profile()
-
-        if profile == current_profile:
-            # No need to do anything if we're already using the desired
-            # profile
-            sys.stdout.write('Info: the %s profile is already set\n' % (profile))
-            return True
-
         sys.stdout.write('Info: selecting the %s profile\n' % (profile))
 
         self._backup_grub_config()
