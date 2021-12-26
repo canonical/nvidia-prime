@@ -10,7 +10,7 @@
 #       Usage:
 #           prime-select   nvidia|intel|on-demand|query
 #           nvidia:    switches to NVIDIA's version of libGL.so
-#           on-demand: load NVIDIA driver, and on-demend for others
+#           on-demand: load NVIDIA driver, and on-demand for others
 #           intel: switches to the open-source version of libGL.so
 #           query: checks which version is currently active and writes
 #                  "nvidia", "intel", "on-demand" or "unknown" to the
