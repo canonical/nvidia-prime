@@ -195,7 +195,7 @@ class Switcher(object):
             card = self._get_bootvga_card()
             if card:
                 vendor = self._get_card_vendor(card)
-                if t.find('8086') != -1 or t.lower().find('1002') != -1:
+                if vendor.find('8086') != -1 or vendor.lower().find('1002') != -1:
                     status = True
 
         return status
