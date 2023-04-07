@@ -51,6 +51,7 @@ from subprocess import Popen, PIPE, CalledProcessError
 
 
 class Switcher(object):
+    t = "1002"
 
     def __init__(self):
         self._power_profile_path = '/etc/prime-discrete'
@@ -163,10 +164,10 @@ class Switcher(object):
             bootvga_path = os.path.join(card, 'device/boot_vga')
             try:
                 with open(bootvga_path, 'r') as f:
-                    t = f.read()
+                    Switcher.t = f.read()
                     f.close()
-                    if t:
-                        if int(t.strip()) > 0:
+                    if Switcher.t:
+                        if int(Switcher.t.strip()) > 0:
                             bootvga = card
                             break
             except:
@@ -176,9 +177,9 @@ class Switcher(object):
     def _get_card_vendor(self, card):
         vendor_path = os.path.join(card, 'device/vendor')
         with open(vendor_path, 'r') as f:
-            t = f.read()
+            Switcher.t = f.read()
             f.close()
-            return t.strip()
+            return Switcher.t.strip()
         return ''
 
     def _has_integrated_gpu(self):
@@ -187,17 +188,18 @@ class Switcher(object):
         path = '/var/lib/ubuntu-drivers-common/last_gfx_boot'
         if os.path.isfile(path):
             with open(path, 'r') as f:
-                t = f.read()
-                if t.find('8086') != -1 or t.lower().find('1002') != -1:
+                Switcher.t = f.read()
+                if Switcher.t.find('8086') != -1 or Switcher.t.lower().find('1002') != -1:
                     status = True
                 f.close()
         else:
             card = self._get_bootvga_card()
             if card:
                 vendor = self._get_card_vendor(card)
-                if t.find('8086') != -1 or t.lower().find('1002') != -1:
+                if Switcher.t.strip() == "1":
                     status = True
-
+                elif Switcher.t.find('8086') != -1 or Switcher.t.lower().find('1002') != -1:
+                    status = True
         return status
 
     def _supports_runtimepm(self):
@@ -332,9 +334,9 @@ options nvidia-drm modeset=%d''' % (value)
         arg_found = False
 
         with open(path, 'r+') as f:
-            t = f.read()
+            Switcher.t = f.read()
             f.seek(0)
-            for line in t.split('\n'):
+            for line in Switcher.t.split('\n'):
                 if line.startswith(pattern):
                     boot_args = line.replace(pattern, '').replace('"', '')
                     boot_args_list = boot_args.split(' ')
@@ -362,9 +364,9 @@ options nvidia-drm modeset=%d''' % (value)
         arg_found = False
 
         with open(path, 'r+') as f:
-            t = f.read()
+            Switcher.t = f.read()
             f.seek(0)
-            for line in t.split('\n'):
+            for line in Switcher.t.split('\n'):
                 if line.startswith(pattern):
                     boot_args = line.replace(pattern, '').replace('"', '')
                     boot_args_list = boot_args.split(' ')
@@ -389,8 +391,8 @@ options nvidia-drm modeset=%d''' % (value)
         for connector in connectors:
             path = '%s/status' % connector
             with open(path, 'r') as f:
-                t = f.read()
-                if t.strip() == 'connected':
+                Switcher.t = f.read()
+                if Switcher.t.strip() == 'connected':
                     connected_connectors.append(connector)
                 f.close()
         return connected_connectors
